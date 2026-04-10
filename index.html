@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>テレストレーション</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+  }
+  .screen.active { display: flex; }
+
+  h1 { font-size: 2.2rem; margin-bottom: 10px; text-align: center; color: #e94560; }
+  h2 { font-size: 1.4rem; margin-bottom: 20px; text-align: center; color: #ccc; }
+  .subtitle { font-size: 1rem; color: #aaa; margin-bottom: 20px; text-align: center; }
+
+  .btn {
+    padding: 14px 36px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    margin: 6px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { background: #e94560; color: #fff; }
+  .btn-secondary { background: #0f3460; color: #fff; }
+  .btn-outline { background: transparent; border: 2px solid #e94560; color: #e94560; }
+
+  #playerList { width: 100%; max-width: 400px; margin-bottom: 15px; }
+  .player-input { display: flex; align-items: center; margin-bottom: 10px; gap: 10px; }
+  .player-input input {
+    flex: 1; padding: 12px 16px; border-radius: 10px;
+    border: 2px solid #444; background: #16213e; color: #fff;
+    font-size: 1rem; outline: none; transition: border 0.2s;
+  }
+  .player-input input:focus { border-color: #e94560; }
+  .remove-btn {
+    background: #e94560; border: none; color: #fff;
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 1.2rem; cursor: pointer; flex-shrink: 0;
+  }
+
+  .difficulty-wrap {
+    display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
+  }
+  .diff-btn {
+    padding: 10px 18px; border-radius: 30px; border: 2px solid transparent;
+    font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+  }
+  .diff-btn.easy   { background: #27ae60; color: #fff; }
+  .diff-btn.normal { background: #2980b9; color: #fff; }
+  .diff-btn.hard   { background: #e67e22; color: #fff; }
+  .diff-btn.oni    { background: #8e44ad; color: #fff; }
+  .diff-btn.custom { background: #7f8c8d; color: #fff; }
+  .diff-btn.inactive { opacity: 0.35; }
+
+  .custom-input-wrap { width: 100%; max-width: 400px; margin-bottom: 10px; }
+  #customTopicInput {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 2px solid #e94560; background: #16213e; color: #fff;
+    font-size: 1.1rem; outline: none; text-align: center;
+  }
+
+  /* ローテーション表示 */
+  .rotation-info {
+    background: #16213e; border-radius: 14px; padding: 14px 20px;
+    margin-bottom: 16px; width: 100%; max-width: 400px;
+    font-size: 0.9rem; color: #aaa; text-align: center; line-height: 1.8;
+  }
+  .rotation-info b { color: #e94560; }
+
+  #passScreen { background: #0f3460; }
+  #passName { color: #e94560; font-size: 2rem; font-weight: bold; }
+
+  #topicBox {
+    background: #16213e; border: 3px solid #e94560;
+    border-radius: 20px; padding: 24px 40px; margin: 20px 0; text-align: center;
+  }
+  #topicText { font-size: 2rem; font-weight: bold; color: #fff; }
+
+  .difficulty-badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: bold; margin-bottom: 10px;
+  }
+  .badge-easy   { background: #27ae60; }
+  .badge-normal { background: #2980b9; }
+  .badge-hard   { background: #e67e22; }
+  .badge-oni    { background: #8e44ad; }
+  .badge-custom { background: #7f8c8d; }
+
+  #drawScreen { padding: 10px; }
+  .draw-header {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 500px; margin-bottom: 6px;
+  }
+  #referenceBox {
+    background: #16213e; border: 2px solid #0f3460; border-radius: 12px;
+    padding: 8px 20px; text-align: center; margin-bottom: 6px;
+    max-width: 500px; width: 100%;
+  }
+  #referenceLabel { font-size: 0.8rem; color: #aaa; }
+  #referenceContent { font-size: 1.3rem; font-weight: bold; color: #e94560; }
+  #drawCanvas {
+    border-radius: 16px; border: 3px solid #0f3460; background: #fff;
+    touch-action: none; cursor: crosshair; max-width: 500px; width: 100%;
+  }
+
+  .tool-bar {
+    display: flex; align-items: center; gap: 10px; margin: 8px 0;
+    flex-wrap: wrap; justify-content: center; max-width: 500px; width: 100%;
+  }
+  .size-btn {
+    background: #16213e; border: 2px solid #444; color: #fff;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.9rem;
+  }
+  .size-btn.active { border-color: #e94560; color: #e94560; }
+  .eraser-btn {
+    background: #16213e; border: 2px solid #444; color: #fff;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.9rem;
+  }
+  .eraser-btn.active { border-color: #f39c12; color: #f39c12; }
+
+  #wordInput {
+    width: 100%; max-width: 400px; padding: 16px 20px;
+    border-radius: 14px; border: 2px solid #0f3460; background: #16213e;
+    color: #fff; font-size: 1.3rem; text-align: center; outline: none; margin: 16px 0;
+  }
+  #wordInput:focus { border-color: #e94560; }
+  #referenceImage {
+    border-radius: 12px; max-width: 340px; width: 90%; margin-bottom: 10px;
+    border: 2px solid #0f3460;
+  }
+
+  #timerDisplay, #timerDisplay2 {
+    font-size: 1.3rem; color: #f39c12; font-weight: bold; min-width: 50px; text-align: right;
+  }
+  .danger { color: #e94560 !important; animation: blink 0.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .progress-bar-wrap {
+    width: 100%; max-width: 500px; background: #16213e;
+    border-radius: 10px; height: 8px; margin-bottom: 8px; overflow: hidden;
+  }
+  .progress-bar { height: 100%; background: #e94560; border-radius: 10px; transition: width 1s linear; }
+  .round-info { font-size: 0.9rem; color: #aaa; }
+
+  #resultScreen {
+    overflow-y: auto; justify-content: flex-start;
+    padding-top: 30px; padding-bottom: 40px;
+  }
+  .result-chain { width: 100%; max-width: 500px; margin-bottom: 30px; }
+  .chain-title { font-size: 1.2rem; color: #e94560; margin-bottom: 12px; font-weight: bold; text-align: center; }
+  .chain-item {
+    background: #16213e; border-radius: 14px; padding: 14px; margin-bottom: 10px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .chain-player { font-size: 0.85rem; color: #aaa; margin-bottom: 6px; }
+  .chain-word { font-size: 1.4rem; font-weight: bold; color: #fff; }
+  .chain-img { max-width: 100%; border-radius: 10px; border: 2px solid #0f3460; }
+  .arrow { text-align: center; font-size: 1.5rem; margin: 4px 0; color: #aaa; }
+
+  .score-section {
+    width: 100%; max-width: 500px; background: #16213e;
+    border-radius: 20px; padding: 20px; margin-bottom: 24px;
+  }
+  .score-title { font-size: 1.1rem; color: #f39c12; font-weight: bold; margin-bottom: 14px; text-align: center; }
+  .score-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid #0f3460;
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-player { font-size: 1rem; }
+  .score-controls { display: flex; align-items: center; gap: 10px; }
+  .score-num { font-size: 1.4rem; font-weight: bold; color: #e94560; min-width: 30px; text-align: center; }
+  .score-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    font-size: 1.2rem; cursor: pointer; font-weight: bold;
+  }
+  .score-plus  { background: #27ae60; color: #fff; }
+  .score-minus { background: #7f8c8d; color: #fff; }
+
+  .score-rule {
+    background: #0f3460; border-radius: 12px; padding: 14px 18px;
+    margin-bottom: 16px; width: 100%; max-width: 500px;
+    font-size: 0.9rem; line-height: 1.8; color: #ccc;
+  }
+  .score-rule b { color: #f39c12; }
+
+  .total-score-section {
+    width: 100%; max-width: 500px; background: #0f3460;
+    border-radius: 20px; padding: 20px; margin-bottom: 24px;
+  }
+  .total-score-title { font-size: 1.1rem; color: #2ecc71; font-weight: bold; margin-bottom: 14px; text-align: center; }
+  .total-score-row {
+    display: flex; align-items: center; justify-content: space-between; padding: 8px 0;
+  }
+  .total-score-player { font-size: 1rem; }
+  .total-score-num { font-size: 1.4rem; font-weight: bold; color: #2ecc71; }
+  .rank-1 { color: #f39c12 !important; }
+  .rank-2 { color: #ccc !important; }
+  .rank-3 { color: #cd7f32 !important; }
+
+  #setupScreen {
+    overflow-y: auto; justify-content: flex-start;
+    padding-top: 30px; padding-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div id="titleScreen" class="screen active">
+  <h1>🎨 テレストレーション</h1>
+  <p class="subtitle">絵と言葉の伝言ゲーム</p>
+  <button class="btn btn-primary" onclick="showSetup()">はじめる</button>
+</div>
+
+<div id="setupScreen" class="screen">
+  <h2>👥 プレイヤー設定</h2>
+  <div id="playerList"></div>
+  <button class="btn btn-outline" onclick="addPlayer()">＋ プレイヤー追加</button>
+  <br>
+  <!-- ローテーション表示 -->
+  <div class="rotation-info" id="rotationInfo"></div>
+  <h2 style="margin-top:10px;">🎯 お題の難易度</h2>
+  <div class="difficulty-wrap">
+    <button class="diff-btn easy inactive"   data-diff="easy"   onclick="toggleDiff('easy',this)">🟢 かんたん</button>
+    <button class="diff-btn normal"          data-diff="normal" onclick="toggleDiff('normal',this)">🔵 ふつう</button>
+    <button class="diff-btn hard inactive"   data-diff="hard"   onclick="toggleDiff('hard',this)">🟠 むずかしい</button>
+    <button class="diff-btn oni inactive"    data-diff="oni"    onclick="toggleDiff('oni',this)">🟣 鬼</button>
+    <button class="diff-btn custom inactive" data-diff="custom" onclick="toggleDiff('custom',this)">✏️ 自由</button>
+  </div>
+  <div class="custom-input-wrap" id="customInputWrap" style="display:none;">
+    <input type="text" id="customTopicInput" placeholder="お題を入力（例：ねこ）">
+  </div>
+  <button class="btn btn-primary" onclick="startGame()">ゲーム開始！</button>
+</div>
+
+<div id="passScreen" class="screen">
+  <p style="color:#aaa; margin-bottom:10px;">次の人に渡してください</p>
+  <div id="passName"></div>
+  <p style="color:#aaa; margin-top:10px; font-size:0.9rem;">の番です</p>
+  <br>
+  <button class="btn btn-primary" onclick="showCurrentTurn()">準備できた ✓</button>
+</div>
+
+<div id="topicScreen" class="screen">
+  <p class="subtitle">あなたのお題はこれ！</p>
+  <div id="topicBadge" class="difficulty-badge"></div>
+  <div id="topicBox">
+    <div id="topicText"></div>
+  </div>
+  <p class="subtitle" style="font-size:0.85rem; color:#888;">↑ 覚えたら絵を描こう</p>
+  <button class="btn btn-primary" onclick="showDraw()">絵を描く 🎨</button>
+</div>
+
+<div id="drawScreen" class="screen">
+  <div class="draw-header">
+    <span class="round-info" id="drawRoundInfo"></span>
+    <div id="timerDisplay">60</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="referenceBox">
+    <div id="referenceLabel">お題</div>
+    <div id="referenceContent"></div>
+  </div>
+  <canvas id="drawCanvas"></canvas>
+  <div class="tool-bar">
+    <button class="size-btn active" data-size="4"  onclick="setSize(this)">細</button>
+    <button class="size-btn"        data-size="10" onclick="setSize(this)">中</button>
+    <button class="size-btn"        data-size="20" onclick="setSize(this)">太</button>
+    <button class="eraser-btn" id="eraserBtn" onclick="toggleEraser()">消しゴム</button>
+    <button class="eraser-btn" onclick="clearCanvas()">全消し</button>
+  </div>
+  <button class="btn btn-primary" onclick="submitDraw()">次へ →</button>
+</div>
+
+<div id="wordScreen" class="screen">
+  <div class="draw-header">
+    <span class="round-info" id="wordRoundInfo"></span>
+    <div id="timerDisplay2">30</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar2"></div></div>
+  <p class="subtitle">この絵は何？</p>
+  <img id="referenceImage" src="" alt="前の絵">
+  <input type="text" id="wordInput" placeholder="なんの絵？" maxlength="30">
+  <button class="btn btn-primary" onclick="submitWord()">次へ →</button>
+</div>
+
+<div id="resultScreen" class="screen">
+  <h2 style="margin-bottom:10px;">🎉 答え合わせ！</h2>
+  <div class="score-rule">
+    <b>得点ルール</b><br>
+    🎯 最後のワードがお題と一致 → <b>全員+1点</b><br>
+    ✏️ 自分のワード回答がお題と一致 → <b>+1点</b><br>
+    🖼️ 自分の絵を正確に当ててもらえた → <b>+1点</b><br>
+    👑 手動加点でみんなで話し合って追加OK
+  </div>
+  <div class="score-section">
+    <div class="score-title">⚡ 今ラウンドの得点（自動計算）</div>
+    <div id="autoScoreRows"></div>
+  </div>
+  <div class="score-section">
+    <div class="score-title">👑 手動で加点（みんなで話し合って！）</div>
+    <div id="manualScoreRows"></div>
+  </div>
+  <div class="result-chain">
+    <div class="chain-title" id="chainTitle"></div>
+    <div id="chainItems"></div>
+  </div>
+  <div class="total-score-section">
+    <div class="total-score-title">🏆 累計スコア</div>
+    <div id="totalScoreRows"></div>
+  </div>
+  <button class="btn btn-primary" onclick="nextRound()">もう一回！</button>
+  <button class="btn btn-secondary" onclick="resetAll()">最初から</button>
+</div>
+
+<script>
+const TOPICS = {
+  easy: [
+    "ねこ","いぬ","ぞう","きりん","うさぎ","くま","ぶた","さる","とり","さかな",
+    "かえる","へび","ライオン","トラ","ペンギン","パンダ","コアラ","カンガルー","シマウマ","サイ",
+    "かば","オオカミ","キツネ","タヌキ","リス","ハムスター","モルモット","インコ","オウム","つる",
+    "フラミンゴ","くじゃく","はと","すずめ","からす","ふくろう","わし","たか","こうもり","もぐら",
+    "うし","うま","ひつじ","やぎ","にわとり","あひる","ガチョウ","七面鳥","アルパカ","ラマ",
+    "かめ","とかげ","イグアナ","カメレオン","ワニ","たこ","いか","えび","かに","ひとで",
+    "クラゲ","サメ","イルカ","くじら","アザラシ","セイウチ","ラッコ","カワウソ","ビーバー","ハリネズミ",
+    "りんご","バナナ","いちご","すいか","みかん","ぶどう","もも","なし","レモン","メロン",
+    "さくらんぼ","マンゴー","パイナップル","キウイ","ブルーベリー","ラズベリー","ザクロ","いちじく","びわ","かき",
+    "ピザ","すし","ラーメン","ハンバーガー","アイスクリーム","ケーキ","おにぎり","たこやき","カレー","パン",
+    "うどん","そば","パスタ","チャーハン","餃子","から揚げ","てんぷら","焼き魚","みそ汁","おでん",
+    "プリン","ドーナツ","クレープ","ワッフル","マカロン","チョコレート","キャンディ","グミ","ポテトチップス","ポップコーン",
+    "にんじん","じゃがいも","たまねぎ","キャベツ","レタス","ブロッコリー","ほうれんそう","トマト","きゅうり","なす",
+    "とうもろこし","かぼちゃ","さつまいも","だいこん","ごぼう","れんこん","しいたけ","えのき","なめこ","まいたけ",
+    "自転車","くるま","バス","でんしゃ","ひこうき","ふね","ロケット","バイク","ヘリコプター","きゅうきゅうしゃ",
+    "しょうぼうしゃ","パトカー","タクシー","トラック","ダンプカー","ショベルカー","ブルドーザー","クレーン車","トレーラー","ゴミ収集車",
+    "新幹線","地下鉄","モノレール","路面電車","リニアモーターカー","ケーブルカー","ロープウェイ","スクーター","三輪車","一輪車",
+    "たいよう","つき","ほし","くも","あめ","ゆき","にじ","かみなり","かぜ","うみ",
+    "はな","き","やま","かわ","はっぱ","きのこ","くさ","いし","かいがら","たけ",
+    "さくら","ひまわり","チューリップ","バラ","タンポポ","あじさい","コスモス","すみれ","ラベンダー","ハス",
+    "いえ","がっこう","ほん","かばん","くつ","ぼうし","めがね","かさ","とけい","でんわ",
+    "スマホ","パソコン","テレビ","カメラ","冷蔵庫","洗濯機","電子レンジ","エアコン","掃除機","ドライヤー",
+    "えんぴつ","けしごむ","ものさし","はさみ","のり","セロテープ","ホチキス","クレヨン","えのぐ","ふで",
+    "まくら","ふとん","ソファ","テーブル","いす","たな","かがみ","じゅうたん","カーテン","ランプ",
+    "ハート","ほし型","まる","しかく","さんかく","ダイヤ","十字","矢印","はてな","びっくりマーク",
+    "おふろ","トイレ","キッチン","ベッド","ドア","まど","かいだん","エレベーター","ポスト","じどうはんばいき",
+    "サッカーボール","やきゅうのグローブ","テニスラケット","バスケットボール","バレーボール","ラグビーボール","バドミントンのラケット","ピンポン玉","ゴルフクラブ","スキー板"
+  ],
+  normal: [
+    "サッカー","野球","水泳","バスケ","テニス","ゴルフ","スキー","サーフィン","ボクシング","卓球",
+    "バレーボール","ラグビー","アメフト","ハンドボール","バドミントン","フェンシング","柔道","剣道","空手","相撲",
+    "マラソン","競泳","体操","フィギュアスケート","スノーボード","スケートボード","自転車競技","馬術","アーチェリー","射撃",
+    "ボウリング","ダーツ","ビリヤード","チェス","将棋","囲碁","マージャン","ポーカー","トランプ","オセロ",
+    "ギター","ピアノ","太鼓","トランペット","バイオリン","フルート","アコーディオン","ハープ","シンバル","タンバリン",
+    "ベース","ドラム","サックス","クラリネット","チェロ","コントラバス","ビオラ","ウクレレ","三味線","琴",
+    "尺八","篠笛","和太鼓","カスタネット","マラカス","ボンゴ","ディジュリドゥ","バグパイプ","リコーダー","ハーモニカ",
+    "ピカチュウ","ドラえもん","アンパンマン","ミッキーマウス","ミニーマウス","ドナルドダック","プーさん","トトロ","キキ","ハウル",
+    "ナルト","ルフィ","悟空","ベジータ","ゴジラ","ウルトラマン","仮面ライダー","ガンダム","エヴァンゲリオン","マジンガーZ",
+    "スパイダーマン","バットマン","スーパーマン","アイアンマン","キャプテンアメリカ","ハルク","ソー","ブラックパンサー","ドクターストレンジ","ワンダーウーマン",
+    "マリオ","ルイージ","ゼルダ","リンク","ピーチ","クッパ","ヨッシー","カービィ","ピクミン","スターフォックス",
+    "ポケモン","イーブイ","リザードン","ミュウツー","カイリュー","ゲンガー","ラプラス","ミュウ","ルカリオ","ゲッコウガ",
+    "いしゃ","せんせい","けいさつかん","しょうぼうし","コック","パイロット","かんごし","べんごし","けんちくか","デザイナー",
+    "サッカー選手","野球選手","俳優","歌手","モデル","カメラマン","プログラマー","農家","漁師","宇宙飛行士",
+    "美容師","理容師","薬剤師","栄養士","保育士","介護士","消防士","警備員","郵便配達員","宅配便",
+    "富士山","東京タワー","スカイツリー","浅草寺","金閣寺","大阪城","奈良の大仏","姫路城","厳島神社","鳥居",
+    "エッフェル塔","自由の女神","エンパイアステートビル","コロッセオ","ピサの斜塔","サグラダファミリア","ビッグベン","タージマハル","万里の長城","ピラミッド",
+    "遊園地","水族館","動物園","博物館","図書館","病院","スーパー","コンビニ","デパート","ホテル",
+    "マクドナルド","スターバックス","吉野家","すき家","サイゼリヤ","ガスト","くら寿司","スシロー","丸亀製麺","松屋",
+    "カップラーメン","カップヌードル","チキンラーメン","どん兵衛","赤いきつね","緑のたぬき","じゃがりこ","プリングルス","オレオ","ハッピーターン",
+    "ドラゴンボール","ワンピース","ナルト","鬼滅の刃","進撃の巨人","ハンターハンター","呪術廻戦","チェンソーマン","僕のヒーローアカデミア","鋼の錬金術師",
+    "セーラームーン","カードキャプターさくら","プリキュア","らんま1/2","犬夜叉","銀魂","るろうに剣心","BLEACH","NARUTO","ONE PIECE",
+    "千と千尋の神隠し","もののけ姫","天空の城ラピュタ","風の谷のナウシカ","崖の上のポニョ","かぐや姫の物語","火垂るの墓","耳をすませば","魔女の宅急便","となりのトトロ",
+    "サンタクロース","シンデレラ","白雪姫","眠り姫","赤ずきん","ラプンツェル","人魚姫","アラジン","ピーターパン","不思議の国のアリス",
+    "眠い","おなかすいた","うれしい","かなしい","おこっている","びっくり","はずかしい","あつい","さむい","つかれた",
+    "走る","泳ぐ","飛ぶ","食べる","寝る","笑う","泣く","踊る","歌う","叫ぶ",
+    "投げる","蹴る","引っ張る","押す","ジャンプ","回転","転ぶ","起き上がる","座る","立つ",
+    "大谷翔平","イチロー","本田圭佑","錦織圭","羽生結弦","浅田真央","福原愛","吉田沙保里","池江璃花子","張本智和",
+    "ディズニーランド","ユニバーサルスタジオジャパン","富士急ハイランド","ナガシマスパーランド","ハウステンボス","レゴランド","よみうりランド","東京ドーム","甲子園","国立競技場",
+    "初日の出","花火大会","花見","盆踊り","七夕","クリスマス","ハロウィン","バレンタイン","お正月","節分",
+    "茶道","華道","書道","剣道","柔道","相撲","歌舞伎","能","狂言","落語"
+  ],
+  hard: [
+    "二日酔い","徹夜明け","満員電車","渋滞","行列","クレーム対応","締め切り前","月曜日の朝","春眠","食後の眠気",
+    "後悔","嫉妬","郷愁","焦り","達成感","孤独","ときめき","倦怠感","安堵","興奮",
+    "デジャヴ","夢オチ","ないものねだり","人間関係のもつれ","モテ期","スランプ","ゾーン（集中）","ピークアウト","フロー状態","ランナーズハイ",
+    "曖昧な記憶","勘違い","思い込み","先入観","バイアス","ジレンマ","パラドックス","ループ","カオス","エントロピー",
+    "地球温暖化","インフレ","少子化","AI","宇宙開発","量子コンピュータ","SNS依存","フードロス","格差社会","デジタル化",
+    "選挙","税金","年金","保険","株式","仮想通貨","NFT","メタバース","ブロックチェーン","サブスクリプション",
+    "猫の手も借りたい","犬も歩けば棒にあたる","石の上にも三年","七転び八起き","案ずるより産むが易し","塵も積もれば山となる","急がば回れ","のれんに腕押し","焼け石に水","口は災いの元",
+    "沈黙は金","時は金なり","笑う門には福来る","花より団子","二兎を追う者は一兎をも得ず","能ある鷹は爪を隠す","親の心子知らず","出る杭は打たれる","七転八倒","棚からぼたもち",
+    "タイタニック","アバター","マトリックス","インセプション","インターステラー","ダークナイト","ジョーカー","パラサイト","万引き家族","ドライブ・マイ・カー",
+    "スター・ウォーズ","ジュラシック・パーク","バック・トゥ・ザ・フューチャー","ホームアローン","ハリー・ポッター","ロード・オブ・ザ・リング","パイレーツ・オブ・カリビアン","トランスフォーマー","アベンジャーズ","ボヘミアン・ラプソディ",
+    "イーロン・マスク","スティーブ・ジョブズ","ビル・ゲイツ","ザッカーバーグ","オバマ","プーチン","習近平","トランプ","マクロン","チャーチル",
+    "ビートルズ","マイケル・ジャクソン","マドンナ","エルビス・プレスリー","ボブ・ディラン","デヴィッド・ボウイ","クイーン","レディー・ガガ","エド・シーラン","テイラー・スウィフト",
+    "ゴッホ","ピカソ","ダリ","モネ","レンブラント","ミケランジェロ","レオナルド・ダ・ヴィンチ","ラファエロ","フェルメール","葛飾北斎",
+    "クラウド","ビッグデータ","機械学習","ディープラーニング","自動運転","ドローン","VR","AR","5G","IoT",
+    "茶の湯","武士道","侍","忍者","切腹","お辞儀","正座","土下座","腹切り","花道",
+    "バズる","炎上","エモい","ヤバい（褒め言葉）","ガチ勢","陰キャ","陽キャ","ぼっち","リア充","こじらせ",
+    "フォロワー","インフルエンサー","ユーチューバー","ストリーマー","Vtuber","推し活","聖地巡礼","2.5次元","コスプレ","オタ活",
+    "朝活","筋トレ","断捨離","ミニマリスト","サウナ","冷水浴","ファスティング","マインドフルネス","瞑想","ヨガ",
+    "織田信長","豊臣秀吉","徳川家康","武田信玄","上杉謙信","明智光秀","伊達政宗","真田幸村","坂本龍馬","西郷隆盛",
+    "ナポレオン","シーザー","アレキサンダー大王","クレオパトラ","マリーアントワネット","リンカーン","ワシントン","ガンジー","マザーテレサ","マンデラ",
+    "アインシュタイン","ニュートン","ガリレオ","コペルニクス","ダーウィン","フロイト","マルクス","ニーチェ","カント","デカルト",
+    "朝ごはんを食べ損ねた日","傘を忘れた日に雨","財布を忘れて気づいた瞬間","電車に乗り遅れた瞬間","遅刻しそうな朝",
+    "鍵を忘れて家に入れない","スマホの充電が1%","Wi-Fiがつながらない","プリンターが壊れた","コピー機の紙詰まり"
+  ],
+  oni: [
+    "丸々した愛情","丸々した孤独","丸々した期待","丸々した焦り","丸々した後悔",
+    "丸々した希望","丸々した絶望","丸々した嫉妬","丸々した安堵","丸々した興奮",
+    "透き通る嘘","透き通る悲しみ","透き通る怒り","透き通る喜び","透き通る不安",
+    "透き通る孤独","透き通る愛","透き通る憎しみ","透き通る期待","透き通る後悔",
+    "重力のない約束","重力のない言葉","重力のない希望","重力のない絶望","重力のない時間",
+    "重力のない愛情","重力のない記憶","重力のない責任","重力のない夢","重力のない孤独",
+    "折り畳まれた記憶","折り畳まれた感情","折り畳まれた時間","折り畳まれた夢","折り畳まれた真実",
+    "折り畳まれた怒り","折り畳まれた愛","折り畳まれた後悔","折り畳まれた期待","折り畳まれた希望",
+    "滲む境界線","滲む記憶","滲む期待","滲む恋心","滲む罪悪感",
+    "滲む孤独","滲む怒り","滲む悲しみ","滲む喜び","滲む不安",
+    "崩れかけた信頼","崩れかけた自信","崩れかけた日常","崩れかけた夢","崩れかけた関係",
+    "崩れかけた希望","崩れかけた約束","崩れかけた愛","崩れかけた友情","崩れかけた計画",
+    "乾いた笑い","乾いた涙","乾いた希望","乾いた言葉","乾いた愛情",
+    "乾いた怒り","乾いた孤独","乾いた期待","乾いた記憶","乾いた絶望",
+    "ループする後悔","ループする記憶","ループする出会い","ループする失敗","ループする夢",
+    "ループする愛","ループする孤独","ループする期待","ループする怒り","ループする希望",
+    "色褪せた期待","色褪せた記憶","色褪せた愛","色褪せた夢","色褪せた日常",
+    "色褪せた希望","色褪せた怒り","色褪せた友情","色褪せた約束","色褪せた信頼",
+    "膨らむ不安","膨らむ期待","膨らむ後悔","膨らむ怒り","膨らむ孤独",
+    "膨らむ希望","膨らむ愛","膨らむ嫉妬","膨らむ罪悪感","膨らむ焦り",
+    "存在の意味","時間の重さ","記憶の匂い","感情の色","思考の速さ",
+    "宇宙の孤独","言葉にならない感情","ゼロの可能性","無限の有限","静寂のうるさい音",
+    "甘い苦しさ","冷たい温もり","遠い近さ","明るい闇","第六感の形",
+    "AIの夢","ロボットの感情","宇宙人の常識","タコの知性","植物の時間",
+    "初めて飛行機に乗った瞬間","試験前夜の絶望","告白が成功した瞬間","告白が失敗した瞬間","卒業式の最後のチャイム",
+    "引っ越し前夜の部屋","誰もいない深夜のコンビニ","満員電車の中の孤独","花火が終わった後の静けさ","初雪が降った朝の静寂",
+    "推しが引退した瞬間","推しが結婚を発表した瞬間","ゲームでラスボスを倒した瞬間","徹夜明けの朝日","積み上げたものが崩れた瞬間",
+    "棚からぼたもちが落ちてくる瞬間","井の中の蛙が空を見上げた瞬間","七転び八起きの七回目","石橋を叩きすぎて壊した瞬間","のれんに腕押しし続けた結果",
+    "走馬灯","既視感","消えそうな記憶","夢と現実の境界","眠れない夜の思考",
+    "鳥肌が止まらない瞬間","背筋が凍る瞬間","手に汗握る展開","震えが止まらない興奮","魂が抜けた顔",
+    "テレパシーの重さ","タイムマシンの後悔","透明人間の孤独","念力の疲れ","瞬間移動の酔い",
+    "忘れたくて忘れられない記憶","思い出せそうで思い出せない名前","言いたくて言えなかった言葉","やりたくてできなかったこと","会いたくて会えない人"
+  ]
+};
+
+// ============================================================
+// ゲーム状態
+// ============================================================
+let players = [];          // 元のプレイヤー順（変わらない）
+let currentOrder = [];     // 今ラウンドの順番（ローテーション済み）
+let roundCount = 0;        // 何ラウンド目か（ローテーション計算用）
+let currentPlayerIndex = 0;
+let currentRound = 0;
+let totalRounds = 0;
+let history = [];
+let initialTopic = "";
+let currentDifficulty = "normal";
+let selectedDiffs = new Set(["normal"]);
+let isDrawPhase = true;
+let timerInterval = null;
+let passCallback = null;
+let totalScores = {};
+let manualScores = {};
+
+// Canvas
+let canvas, ctx;
+let isDrawing = false;
+let currentSize = 4;
+let isEraser = false;
+let lastX = 0, lastY = 0;
+
+const DRAW_TIME = 60;
+const WORD_TIME = 30;
+
+// ============================================================
+// 初期化
+// ============================================================
+window.onload = () => {
+  canvas = document.getElementById("drawCanvas");
+  ctx = canvas.getContext("2d");
+  setupCanvas();
+  initPlayers();
+  setupDrawEvents();
+};
+
+function setupCanvas() {
+  const maxW = Math.min(window.innerWidth - 40, 500);
+  canvas.width = maxW;
+  canvas.height = Math.floor(maxW * 0.65);
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+}
+
+function initPlayers() {
+  const list = document.getElementById("playerList");
+  list.innerHTML = "";
+  ["プレイヤー1","プレイヤー2","プレイヤー3"].forEach(n => addPlayerRow(n));
+  updateRotationInfo();
+}
+
+// ============================================================
+// 画面遷移
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function showSetup() {
+  updateRotationInfo();
+  showScreen("setupScreen");
+}
+
+// ============================================================
+// ローテーション表示
+// ============================================================
+function updateRotationInfo() {
+  const names = Array.from(document.querySelectorAll(".player-input input"))
+    .map(i => i.value.trim()).filter(n => n !== "");
+  const info = document.getElementById("rotationInfo");
+  if (names.length < 2) { info.innerHTML = ""; return; }
+
+  // 次のラウンドの先頭を計算して表示
+  const nextStarter = names[roundCount % names.length];
+  info.innerHTML = `
+    <b>ラウンド ${roundCount + 1}</b> の最初の人：<b>${nextStarter}</b><br>
+    <span style="font-size:0.8rem;">毎ラウンド1人ずつずれていきます</span>
+  `;
+}
+
+// ============================================================
+// 難易度
+// ============================================================
+function toggleDiff(diff, btn) {
+  if (diff === "custom") {
+    const isOn = selectedDiffs.has("custom");
+    selectedDiffs.clear();
+    if (!isOn) selectedDiffs.add("custom");
+    document.getElementById("customInputWrap").style.display =
+      selectedDiffs.has("custom") ? "block" : "none";
+  } else {
+    selectedDiffs.delete("custom");
+    document.getElementById("customInputWrap").style.display = "none";
+    if (selectedDiffs.has(diff)) {
+      if (selectedDiffs.size > 1) selectedDiffs.delete(diff);
+    } else {
+      selectedDiffs.add(diff);
+    }
+  }
+  document.querySelectorAll(".diff-btn").forEach(b => {
+    b.classList.toggle("inactive", !selectedDiffs.has(b.dataset.diff));
+  });
+}
+
+function pickTopic() {
+  if (selectedDiffs.has("custom")) {
+    const v = document.getElementById("customTopicInput").value.trim();
+    if (!v) { alert("お題を入力してください"); return null; }
+    currentDifficulty = "custom";
+    return v;
+  }
+  const pool = [];
+  [...selectedDiffs].forEach(d => {
+    if (TOPICS[d]) TOPICS[d].forEach(t => pool.push({t, d}));
+  });
+  if (!pool.length) { alert("難易度を選んでください"); return null; }
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+  currentDifficulty = chosen.d;
+  return chosen.t;
+}
+
+// ============================================================
+// プレイヤー設定
+// ============================================================
+function addPlayer() {
+  const count = document.querySelectorAll(".player-input").length + 1;
+  addPlayerRow(`プレイヤー${count}`);
+  updateRotationInfo();
+}
+function addPlayerRow(defaultName) {
+  const list = document.getElementById("playerList");
+  const div = document.createElement("div");
+  div.className = "player-input";
+  div.innerHTML = `
+    <input type="text" value="${defaultName}" placeholder="名前" oninput="updateRotationInfo()">
+    <button class="remove-btn" onclick="removePlayer(this)">×</button>
+  `;
+  list.appendChild(div);
+}
+function removePlayer(btn) {
+  if (document.querySelectorAll(".player-input").length <= 2) {
+    alert("最低2人必要です"); return;
+  }
+  btn.parentElement.remove();
+  updateRotationInfo();
+}
+
+// ============================================================
+// ゲーム開始
+// ============================================================
+function startGame() {
+  players = Array.from(document.querySelectorAll(".player-input input"))
+    .map(i => i.value.trim()).filter(n => n !== "");
+  if (players.length < 2) { alert("2人以上入力してください"); return; }
+
+  // スコア初期化（初回のみ）
+  if (Object.keys(totalScores).length === 0) {
+    players.forEach(p => totalScores[p] = 0);
+  }
+
+  // ローテーション：roundCount分だけ先頭をずらす
+  currentOrder = rotateArray(players, roundCount);
+
+  currentPlayerIndex = 0;
+  currentRound = 0;
+  totalRounds = players.length;
+  history = [];
+  isDrawPhase = true;
+
+  const topic = pickTopic();
+  if (!topic) return;
+  initialTopic = topic;
+
+  showPassScreen(currentOrder[0], () => showTopicScreen());
+}
+
+// 配列をn個ずらす
+function rotateArray(arr, n) {
+  const len = arr.length;
+  const shift = n % len;
+  return [...arr.slice(shift), ...arr.slice(0, shift)];
+}
+
+// ============================================================
+// パス画面
+// ============================================================
+function showPassScreen(name, callback) {
+  passCallback = callback;
+  document.getElementById("passName").textContent = name;
+  showScreen("passScreen");
+}
+function showCurrentTurn() {
+  if (passCallback) passCallback();
+}
+
+// ============================================================
+// お題表示
+// ============================================================
+function showTopicScreen() {
+  document.getElementById("topicText").textContent = initialTopic;
+  const badge = document.getElementById("topicBadge");
+  const labels = {
+    easy:"🟢 かんたん", normal:"🔵 ふつう",
+    hard:"🟠 むずかしい", oni:"🟣 鬼", custom:"✏️ 自由"
+  };
+  badge.textContent = labels[currentDifficulty] || "";
+  badge.className = `difficulty-badge badge-${currentDifficulty}`;
+  showScreen("topicScreen");
+}
+
+// ============================================================
+// お絵描き
+// ============================================================
+function showDraw() {
+  clearCanvas();
+  stopTimer();
+  document.getElementById("drawRoundInfo").textContent =
+    `${currentOrder[currentPlayerIndex]} のターン（${currentRound + 1}/${totalRounds}）`;
+  if (currentRound === 0) {
+    document.getElementById("referenceLabel").textContent = "お題";
+    document.getElementById("referenceContent").textContent = initialTopic;
+  } else {
+    const last = history[history.length - 1];
+    document.getElementById("referenceLabel").textContent = "前の人のワード";
+    document.getElementById("referenceContent").textContent = last ? last.content : "";
+  }
+  showScreen("drawScreen");
+  startTimer("draw");
+}
+
+function submitDraw() {
+  stopTimer();
+  history.push({
+    playerName: currentOrder[currentPlayerIndex],
+    type: "draw",
+    content: canvas.toDataURL("image/png")
+  });
+  nextTurn();
+}
+
+// ============================================================
+// ワード入力
+// ============================================================
+function showWordScreen() {
+  stopTimer();
+  document.getElementById("wordInput").value = "";
+  document.getElementById("wordRoundInfo").textContent =
+    `${currentOrder[currentPlayerIndex]} のターン（${currentRound + 1}/${totalRounds}）`;
+  const last = history[history.length - 1];
+  document.getElementById("referenceImage").src = last ? last.content : "";
+  showScreen("wordScreen");
+  startTimer("word");
+}
+
+function submitWord() {
+  stopTimer();
+  const word = document.getElementById("wordInput").value.trim();
+  if (!word) { alert("ワードを入力してください"); return; }
+  history.push({
+    playerName: currentOrder[currentPlayerIndex],
+    type: "word",
+    content: word
+  });
+  nextTurn();
+}
+
+// ============================================================
+// ターン管理
+// ============================================================
+function nextTurn() {
+  currentPlayerIndex++;
+  currentRound++;
+  if (currentRound >= totalRounds) { showResult(); return; }
+  isDrawPhase = !isDrawPhase;
+  const nextPlayer = currentOrder[currentPlayerIndex];
+  if (isDrawPhase) {
+    showPassScreen(nextPlayer, () => showDraw());
+  } else {
+    showPassScreen(nextPlayer, () => showWordScreen());
+  }
+}
+
+// ============================================================
+// タイマー
+// ============================================================
+function startTimer(mode) {
+  const maxTime = mode === "draw" ? DRAW_TIME : WORD_TIME;
+  let remaining = maxTime;
+  const display = document.getElementById(mode === "draw" ? "timerDisplay" : "timerDisplay2");
+  const bar     = document.getElementById(mode === "draw" ? "progressBar"  : "progressBar2");
+  display.classList.remove("danger");
+  display.textContent = remaining;
+  bar.style.width = "100%";
+  timerInterval = setInterval(() => {
+    remaining--;
+    display.textContent = remaining;
+    bar.style.width = `${(remaining / maxTime) * 100}%`;
+    if (remaining <= 10) display.classList.add("danger");
+    if (remaining <= 0) {
+      stopTimer();
+      if (mode === "draw") submitDraw(); else submitWord();
+    }
+  }, 1000);
+}
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// ============================================================
+// 答え合わせ・得点
+// ============================================================
+function showResult() {
+  manualScores = {};
+  players.forEach(p => manualScores[p] = 0);
+
+  const autoScores = {};
+  players.forEach(p => autoScores[p] = 0);
+
+  const normalize = s => s.replace(/\s/g,"").toLowerCase();
+  const lastItem = history[history.length - 1];
+  const lastWord = lastItem && lastItem.type === "word" ? lastItem.content : "";
+  const perfect = normalize(lastWord) === normalize(initialTopic);
+  if (perfect) players.forEach(p => autoScores[p] += 1);
+
+  history.filter(h => h.type === "word").forEach(h => {
+    if (normalize(h.content) === normalize(initialTopic)) {
+      autoScores[h.playerName] = (autoScores[h.playerName] || 0) + 1;
+    }
+  });
+
+  history.forEach((h, idx) => {
+    if (h.type === "draw") {
+      const next = history[idx + 1];
+      if (next && next.type === "word" && normalize(next.content) === normalize(initialTopic)) {
+        autoScores[h.playerName] = (autoScores[h.playerName] || 0) + 1;
+      }
+    }
+  });
+
+  players.forEach(p => totalScores[p] = (totalScores[p] || 0) + (autoScores[p] || 0));
+
+  // 自動得点UI
+  const autoRows = document.getElementById("autoScoreRows");
+  autoRows.innerHTML = "";
+  if (perfect) {
+    const banner = document.createElement("div");
+    banner.style = "text-align:center;color:#f39c12;font-weight:bold;margin-bottom:10px;";
+    banner.textContent = `🎉 最後のワードが「${initialTopic}」に一致！全員+1点！`;
+    autoRows.appendChild(banner);
+  }
+  players.forEach(p => {
+    const row = document.createElement("div");
+    row.className = "score-row";
+    row.innerHTML = `<span class="score-player">${p}</span><span class="score-num">+${autoScores[p]}点</span>`;
+    autoRows.appendChild(row);
+  });
+
+  // 手動加点UI
+  const manualRows = document.getElementById("manualScoreRows");
+  manualRows.innerHTML = "";
+  players.forEach(p => {
+    const row = document.createElement("div");
+    row.className = "score-row";
+    row.innerHTML = `
+      <span class="score-player">${p}</span>
+      <div class="score-controls">
+        <button class="score-btn score-minus" onclick="changeManual('${p}',-1)">－</button>
+        <span class="score-num" id="manual_${p}">0</span>
+        <button class="score-btn score-plus"  onclick="changeManual('${p}',+1)">＋</button>
+      </div>
+    `;
+    manualRows.appendChild(row);
+  });
+
+  // チェーン
+  document.getElementById("chainTitle").textContent = `🎯 お題：「${initialTopic}」`;
+  const chainItems = document.getElementById("chainItems");
+  chainItems.innerHTML = "";
+  const firstEl = document.createElement("div");
+  firstEl.className = "chain-item";
+  firstEl.innerHTML = `<div class="chain-player">スタート（${currentOrder[0]}）</div><div class="chain-word">「${initialTopic}」</div>`;
+  chainItems.appendChild(firstEl);
+
+  history.forEach(item => {
+    const arrow = document.createElement("div");
+    arrow.className = "arrow"; arrow.textContent = "↓";
+    chainItems.appendChild(arrow);
+    const el = document.createElement("div");
+    el.className = "chain-item";
+    if (item.type === "draw") {
+      el.innerHTML = `<div class="chain-player">${item.playerName} が描いた</div><img class="chain-img" src="${item.content}">`;
+    } else {
+      el.innerHTML = `<div class="chain-player">${item.playerName} が答えた</div><div class="chain-word">「${item.content}」</div>`;
+    }
+    chainItems.appendChild(el);
+  });
+
+  renderTotalScore();
+  showScreen("resultScreen");
+}
+
+function changeManual(player, delta) {
+  manualScores[player] = Math.max(0, (manualScores[player] || 0) + delta);
+  document.getElementById(`manual_${player}`).textContent = manualScores[player];
+  renderTotalScore();
+}
+
+function renderTotalScore() {
+  const combined = {};
+  players.forEach(p => combined[p] = (totalScores[p] || 0) + (manualScores[p] || 0));
+  const sorted = [...players].sort((a, b) => combined[b] - combined[a]);
+  const rows = document.getElementById("totalScoreRows");
+  rows.innerHTML = "";
+  sorted.forEach((p, idx) => {
+    const row = document.createElement("div");
+    row.className = "total-score-row";
+    const rankClass = idx === 0 ? "rank-1" : idx === 1 ? "rank-2" : idx === 2 ? "rank-3" : "";
+    const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx+1}.`;
+    row.innerHTML = `
+      <span class="total-score-player">${medal} ${p}</span>
+      <span class="total-score-num ${rankClass}">${combined[p]}点</span>
+    `;
+    rows.appendChild(row);
+  });
+}
+
+// ============================================================
+// もう一回・最初から
+// ============================================================
+function nextRound() {
+  // 手動スコアを累計に確定
+  players.forEach(p => {
+    totalScores[p] = (totalScores[p] || 0) + (manualScores[p] || 0);
+  });
+  // ラウンド数を進める（次回のローテーション用）
+  roundCount++;
+  showSetup();
+}
+
+function resetAll() {
+  totalScores = {};
+  manualScores = {};
+  players = [];
+  roundCount = 0;
+  showScreen("titleScreen");
+  initPlayers();
+}
+
+// ============================================================
+// お絵描きロジック
+// ============================================================
+function setupDrawEvents() {
+  canvas.addEventListener("mousedown", e => { isDrawing = true; [lastX, lastY] = getPos(e); });
+  canvas.addEventListener("mousemove", e => { if (isDrawing) draw(e); });
+  canvas.addEventListener("mouseup",   () => isDrawing = false);
+  canvas.addEventListener("mouseleave",() => isDrawing = false);
+  canvas.addEventListener("touchstart", e => {
+    e.preventDefault(); isDrawing = true; [lastX, lastY] = getPos(e.touches[0]);
+  }, { passive: false });
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault(); if (isDrawing) draw(e.touches[0]);
+  }, { passive: false });
+  canvas.addEventListener("touchend", () => isDrawing = false);
+}
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return [
+    (e.clientX - rect.left) * (canvas.width / rect.width),
+    (e.clientY - rect.top)  * (canvas.height / rect.height)
+  ];
+}
+
+function draw(e) {
+  const [x, y] = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = isEraser ? "#fff" : "#222";
+  ctx.lineWidth = isEraser ? currentSize * 3 : currentSize;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  [lastX, lastY] = [x, y];
+}
+
+function setSize(btn) {
+  currentSize = parseInt(btn.dataset.size);
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function toggleEraser() {
+  isEraser = !isEraser;
+  document.getElementById("eraserBtn").classList.toggle("active", isEraser);
+}
+
+function clearCanvas() {
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+</script>
+</body>
+</html>
