@@ -63,7 +63,7 @@ body{
   border-left:1px solid var(--border);
   border-right:1px solid var(--border);
 }
-
+​
 /* top bar */
 .topbar{
   display:flex;align-items:center;gap:8px;
@@ -96,13 +96,13 @@ body{
   background:var(--surface2);color:var(--text);
 }
 .timer.warn{background:var(--red-soft);color:var(--red);}
-
+​
 /* screens */
 main{flex:1;display:flex;min-height:0;}
 .screen{display:none;flex-direction:column;width:100%;padding:24px 24px calc(40px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;}
 .screen.active{display:flex;}
 .screen.center{justify-content:center;align-items:center;text-align:center;}
-
+​
 h1{font-size:34px;line-height:1.15;letter-spacing:-.03em;font-weight:800;}
 h2{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:800;margin-bottom:4px;}
 .lead{color:var(--muted);font-size:15px;}
@@ -110,7 +110,7 @@ h2{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:800;margin-
 .section:first-of-type{margin-top:8px;}
 .label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:.12em;text-transform:uppercase;}
 .hint{font-size:13px;color:var(--muted);margin-top:8px;}
-
+​
 /* buttons */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -127,7 +127,7 @@ h2{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:800;margin-
 .btn-row{display:flex;gap:12px;margin-top:24px;}
 .btn-row .btn{flex:1;}
 .sticky-actions{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 78%,rgba(23,25,29,0));padding-top:16px;margin-top:24px;}
-
+​
 /* players */
 .player-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .player-row .num{width:22px;text-align:center;font-size:13px;color:var(--muted);flex:0 0 22px;}
@@ -144,7 +144,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
   font-size:18px;cursor:pointer;
 }
 .remove-btn:hover{background:var(--red-soft);color:var(--red);border-color:var(--red-soft);}
-
+​
 /* chips */
 .chips{display:flex;flex-wrap:wrap;gap:8px;}
 .chip{
@@ -155,13 +155,13 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 }
 .chip:hover{background:var(--surface2);}
 .chip.on{background:var(--accent-soft);border-color:var(--accent);color:#BBD8FF;box-shadow:0 0 0 1px var(--accent) inset;}
-
+​
 .note{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:14px 16px;font-size:14px;color:var(--muted);line-height:1.7;
 }
 .note b{color:var(--text);}
-
+​
 /* pass screen */
 .pass-kicker{font-size:14px;color:var(--muted);}
 .pass-name{font-size:38px;font-weight:700;letter-spacing:-.02em;margin:8px 0 4px;word-break:break-all;}
@@ -169,7 +169,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
   display:inline-block;margin-bottom:24px;padding:6px 14px;border-radius:999px;
   background:var(--surface2);color:var(--muted);font-size:13px;font-weight:600;
 }
-
+​
 /* topic */
 .topic-card{
   width:100%;background:var(--surface);border:1px solid var(--border);
@@ -182,7 +182,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 .badge-hard{background:var(--orange-soft);color:var(--orange);}
 .badge-expert{background:var(--red-soft);color:var(--red);}
 .badge-custom{background:var(--surface2);color:var(--muted);}
-
+​
 /* draw */
 .meta-row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);margin-bottom:10px;}
 .progress{height:4px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-bottom:16px;}
@@ -206,10 +206,10 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 .tool:hover{background:var(--surface2);}
 .tool.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);}
 .tool .dot{display:inline-block;border-radius:50%;background:currentColor;vertical-align:middle;margin-right:6px;}
-
+​
 /* word */
 .guess-img{width:100%;border:1px solid var(--border);border-radius:var(--radius);background:#fff;display:block;}
-
+​
 /* result */
 .card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
 .card-title{font-size:14px;font-weight:700;margin-bottom:12px;}
@@ -240,7 +240,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
   font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 26px;
 }
 .rank-badge.top{background:var(--accent-soft);color:var(--accent);}
-
+​
 /* ---------- brand ---------- */
 .logo{
   width:104px;height:104px;border-radius:28px;
@@ -258,7 +258,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 .tagline{color:var(--muted);font-size:15px;margin-top:12px;}
 .title-actions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;margin-top:34px;}
 .title-foot{margin-top:26px;font-size:12px;color:#5F6673;letter-spacing:.04em;}
-
+​
 /* ---------- modal sheet ---------- */
 .overlay{
   position:fixed;inset:0;z-index:70;display:none;
@@ -281,7 +281,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
   background:var(--accent-soft);color:#9CC6FF;border:1px solid #24446E;
   font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;
 }
-
+​
 /* ---------- ring timer ---------- */
 .timer{position:relative;display:inline-flex;align-items:center;justify-content:center;
   width:44px;height:44px;padding:0;background:transparent;}
@@ -292,7 +292,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 .timer.warn{background:transparent;}
 .timer.warn .ring-fg{stroke:var(--red);}
 .timer.warn .t-num{color:var(--red);}
-
+​
 /* ---------- ink palette ---------- */
 .palette{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap;}
 .swatch{
@@ -304,14 +304,14 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
 .tool-group{display:flex;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
 .tool-group .tool{border:none;background:transparent;min-height:40px;padding:0 12px;border-radius:9px;}
 .tool-group .tool.on{background:var(--accent-soft);color:#BBD8FF;}
-
+​
 /* ---------- result polish ---------- */
 .medal{font-size:17px;line-height:1;}
 .rank-badge.top{background:linear-gradient(140deg,#F0C560,#D9A227);color:#3A2A05;box-shadow:0 2px 10px rgba(240,197,96,.35);}
 .card{box-shadow:0 1px 2px rgba(0,0,0,.35);}
 .chain-item{transition:transform .2s var(--ease);}
 .win-title{font-size:15px;font-weight:800;color:var(--gold);letter-spacing:.02em;}
-
+​
 /* motion & fx */
 .screen.active{animation:screenIn .26s ease-out;}
 @keyframes screenIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
@@ -370,7 +370,7 @@ input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--acc
   .pass-name{font-size:32px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
-
+​
 /* RC 2.0: readable, scroll-safe layouts and accessible controls. */
 [hidden]{display:none!important;}
 :root{--accent:#78AEF3;--shadow:0 2px 8px #0002;}
@@ -428,13 +428,13 @@ main{overflow:hidden;}
 @media(min-width:1024px){.app{height:calc(100dvh - 48px);min-height:0;}}
 @media(max-width:360px){.screen{padding-left:12px;padding-right:12px;}.topbar-title{display:none;}.topbar-right{margin-left:auto;}.tool{font-size:12px;}.wordmark{font-size:40px;}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation:none!important;transition:none!important;}}
-
-
+​
+​
 [tabindex='-1']:focus{outline:none;}
 #storageWarning{background:#382716;color:#FFD6A3;font-size:13px;line-height:1.5;padding:8px 12px;flex:none;}
-
+​
 .wordmark{font-size:clamp(22px,7.6vw,38px);letter-spacing:-.02em;white-space:nowrap;}
-
+​
 /* Canvas-first drawing workspace. Dimensions are saved with each drawing. */
 #drawScreen{padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:hidden;min-height:0;gap:0;animation:none;}
 #drawScreen .meta-row{font-size:12px;line-height:20px;margin:0 4px 4px;flex:none;}
@@ -458,11 +458,11 @@ main{overflow:hidden;}
 .drawing-popover .text-button{min-height:36px;}
 .guess-img,.chain-img{aspect-ratio:auto;object-fit:contain;}
 @media(max-height:480px){#drawScreen .meta-row{display:none;}#drawScreen .ref{padding:4px 8px;margin-bottom:6px;}#drawScreen .ref-text{font-size:14px;}.drawing-dock{padding-top:6px;}}
-
-
+​
+​
 /* Borderless outer frame; control outlines remain. */
 .app{border:0;box-shadow:none;}
-
+​
 /* Edge-to-edge workspace: no outer card, gutters, or contrasting frame. */
 html,body{background:var(--bg);}
 body{align-items:stretch;}
@@ -474,7 +474,7 @@ body{align-items:stretch;}
 #drawingStage{border:0;border-radius:0;box-shadow:none;background:transparent;}
 #drawingStage #drawCanvas{border:0;border-radius:0;box-shadow:none;}
 .drawing-dock{padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));}
-
+​
 </style>
 </head>
 <body>
@@ -494,7 +494,7 @@ body{align-items:stretch;}
     <div class="topbar-title" id="topbarTitle">テレストレーション</div>
     <div class="topbar-right"><button id="pauseBtn" class="pause-btn" onclick="pauseGame()" hidden aria-label="ゲームを一時停止">一時停止</button><button class="sound-btn" id="soundBtn" onclick="toggleSound()" aria-label="音のオン/オフ" title="音のオン/オフ">🔊</button><span class="timer" id="timer" style="display:none"><svg viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="19" fill="none" stroke-width="3"></circle><circle class="ring-fg" id="timerRing" cx="22" cy="22" r="19" fill="none" stroke-width="3" stroke-dasharray="119.4" stroke-dashoffset="0"></circle></svg><span class="t-num" id="timerNum">60</span></span></div>
   </header>
-
+​
   <main>
     <!-- TITLE -->
     <section id="titleScreen" class="screen center active">
@@ -513,19 +513,19 @@ body{align-items:stretch;}
       </div>
       <p class="title-foot">1台の端末を回して遊ぶ · 2〜8人対応</p><p class="privacy-note">名前・設定はこのブラウザーに保存。進行は同じタブの再読み込み時に復元できます。サーバーには送信しません。</p><button class="text-button" onclick="deleteSaved()">保存データを削除</button>
     </section>
-
+​
     <!-- SETUP -->
     <section id="setupScreen" class="screen">
       <h2>ゲーム設定</h2>
       <p class="lead">プレイヤーとお題のジャンルを決めましょう。</p>
-
+​
       <div class="section">
         <div class="label">プレイヤー</div>
         <div id="playerList"></div>
         <button class="btn btn-quiet btn-block" id="addPlayerBtn" style="margin-top:4px;" onclick="addPlayer()">＋ プレイヤーを追加</button>
         <div class="note" id="rotationInfo" style="margin-top:12px;"></div>
       </div>
-
+​
       <div class="section">
         <div class="label">お題のジャンル（複数選択可）</div>
         <div class="chips">
@@ -539,7 +539,7 @@ body{align-items:stretch;}
           <input type="text" aria-label="自由なお題" id="customTopic" placeholder="お題を入力（例：ねこ）" maxlength="30">
         </div>
       </div>
-
+​
       <div class="section">
         <div class="label">制限時間</div>
         <div class="chips">
@@ -549,12 +549,12 @@ body{align-items:stretch;}
         </div>
         <p class="hint">描く時間／答える時間。時間切れでは入力を保持して確認を表示します。一時停止もできます。</p>
       </div>
-
+​
       <div class="sticky-actions">
         <button class="btn btn-primary btn-block" onclick="startGame()">ゲームを開始</button>
       </div>
     </section>
-
+​
     <!-- PASS -->
     <section id="passScreen" class="screen center">
       <p class="pass-kicker">次の人に端末を渡してください</p>
@@ -563,7 +563,7 @@ body{align-items:stretch;}
       <button class="btn btn-primary" style="min-width:200px;" id="passReady">準備できた</button>
       <p class="hint">本人が「準備できた」を押してください。</p>
     </section>
-
+​
     <!-- TOPIC -->
     <section id="topicScreen" class="screen center">
       <span class="badge" id="topicBadge"></span>
@@ -573,7 +573,7 @@ body{align-items:stretch;}
       <p class="hint" style="margin-bottom:24px;">覚えたら絵を描きましょう。ほかの人には見せないでください。</p>
       <button class="btn btn-primary" style="min-width:200px;" onclick="navTo('draw')">絵を描く</button>
     </section>
-
+​
     <!-- DRAW -->
     <section id="drawScreen" class="screen">
       <div class="meta-row"><span id="drawWho"></span><span id="drawStep"></span></div>
@@ -593,8 +593,8 @@ body{align-items:stretch;}
             <div id="palette" hidden></div>
             <div class="tools">
               <div class="tool-group">
-                <button class="tool on" data-size="4" onclick="setSize(this)">細</button>
-                <button class="tool" data-size="8" onclick="setSize(this)">中</button>
+                <button class="tool" data-size="4" onclick="setSize(this)">細</button>
+                <button class="tool on" data-size="8" onclick="setSize(this)">中</button>
                 <button class="tool" data-size="18" onclick="setSize(this)">太</button>
               </div>
               <button class="tool" id="eraserBtn" onclick="toggleEraser()">消しゴム</button>
@@ -607,7 +607,7 @@ body{align-items:stretch;}
         <button class="btn btn-primary" onclick="submitDraw()">描き終わった</button>
       </div>
     </section>
-
+​
     <!-- WORD -->
     <section id="wordScreen" class="screen">
       <div class="meta-row"><span id="wordWho"></span><span id="wordStep"></span></div>
@@ -619,17 +619,17 @@ body{align-items:stretch;}
         <button class="btn btn-primary btn-block" onclick="submitWord()">決定</button>
       </div>
     </section>
-
+​
     <!-- RESULT -->
     <section id="resultScreen" class="screen">
       <h2>答え合わせ</h2>
       <p class="lead" id="resultTopic"></p>
-
+​
       <div class="section">
         <div class="label">伝言のながれ</div>
         <div id="chain"></div>
       </div>
-
+​
       <div class="section">
         <div class="label">得点</div>
         <div class="note" style="margin-bottom:12px;">
@@ -650,7 +650,7 @@ body{align-items:stretch;}
           <div id="totalRows"></div>
         </div>
       </div>
-
+​
       <div class="btn-row">
         <button class="btn btn-quiet" onclick="resetAll()">ゲームを終了</button>
         <button class="btn btn-primary" onclick="nextRound()">次のラウンドへ</button>
@@ -658,7 +658,7 @@ body{align-items:stretch;}
     </section>
   </main>
 </div>
-
+​
 <script>
 const TOPICS = {
   "easy": [
@@ -1200,7 +1200,7 @@ const INK_NAMES = ['黒','赤','青','緑','黄土','紫'];
 let screen='title', game=null, backStack=[], pendingSession=null;
 let selectedDiffs=new Set(['easy']),timeSetting='normal',setupNames=['','',''];
 let draft=[],undoStack=[],redoStack=[],activeStroke=null,pointerId=null;
-let ink=INKS[0],penSize=4,eraser=false,wordValue='';
+let ink=INKS[0],penSize=8,eraser=false,wordValue='';
 let timerId=null,remaining=null,lastTick=0,paused=false,expiryShown=false;
 let navLockTimer=null;
 let transitionUntil=0,modalResolve=null,focusBefore=null,saveId=null,storageWarned=false;
@@ -1215,7 +1215,7 @@ function lockNavigation(){transitionUntil=performance.now()+420;clearTimeout(nav
 function permitted(){if(performance.now()<transitionUntil)return false;lockNavigation();return true;}
 function isTurn(){return screen==='draw'||screen==='word';}
 function hideFx(){fxToken++;cancelAnimationFrame(fxId);const c=$('fx');c.getContext('2d').clearRect(0,0,c.width,c.height);}
-
+​
 const Sound=(()=>{
   let enabled=true,ac=null,voices=new Set();
   try{enabled=localStorage.getItem('tele_sound')!=='off';}catch{}
@@ -1227,7 +1227,7 @@ const Sound=(()=>{
 function updateSound(){const b=$('soundBtn');b.textContent=Sound.enabled?'音 ON':'音 OFF';b.classList.toggle('off',!Sound.enabled);b.setAttribute('aria-pressed',String(Sound.enabled));b.setAttribute('aria-label',Sound.enabled?'音をオフにする':'音をオンにする');}
 function toggleSound(){Sound.toggle();updateSound();}
 function celebrate(){if(motionQuery.matches)return;hideFx();const token=fxToken,c=$('fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const parts=Array.from({length:65},()=>({x:Math.random()*c.width,y:-Math.random()*200,v:100+Math.random()*160,r:Math.random()*6,color:INKS[1+Math.floor(Math.random()*5)]}));let prev=performance.now(),start=prev;function frame(t){if(token!==fxToken||screen!=='result'||document.hidden)return;const dt=Math.min((t-prev)/1000,.05);prev=t;x.clearRect(0,0,c.width,c.height);for(const p of parts){p.y+=p.v*dt;p.r+=dt;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.color;x.fillRect(-3,-5,6,10);x.restore();}if(t-start<3500)fxId=requestAnimationFrame(frame);else hideFx();}fxId=requestAnimationFrame(frame);}
-
+​
 function openDialog(title,body,options=[{label:'閉じる',value:true}]){
   if(modalResolve)return Promise.resolve(false);
   focusBefore=document.activeElement;paused=true;
@@ -1242,7 +1242,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){e.preventDefault();const first=$('dialogActions').querySelector('button');first.click();}
   if(e.key==='Tab'){const bs=[...$('dialogActions').querySelectorAll('button')];const first=bs[0],last=bs.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
 });
-
+​
 function readPlayers(){return [...$('playerList').querySelectorAll('input')].map((x,i)=>x.value.trim()||'プレイヤー'+(i+1));}
 function renderPlayers(names=setupNames){$('playerList').replaceChildren();names.forEach((name,i)=>{const row=document.createElement('div');row.className='player-row';const n=document.createElement('span');n.className='num';n.textContent=i+1;const input=document.createElement('input');input.type='text';input.maxLength=12;input.value=name;input.placeholder='プレイヤー'+(i+1);input.setAttribute('aria-label','プレイヤー'+(i+1)+'の名前');input.autocomplete='off';input.addEventListener('input',()=>{setupNames=[...$('playerList').querySelectorAll('input')].map(x=>x.value);updateRotationInfo();savePrefs();});const b=document.createElement('button');b.type='button';b.className='remove-btn';b.textContent='×';b.setAttribute('aria-label','プレイヤー'+(i+1)+'を削除');b.disabled=names.length<=2;b.onclick=()=>{if(names.length<=2)return;setupNames=[...$('playerList').querySelectorAll('input')].map(x=>x.value);setupNames.splice(i,1);renderPlayers();savePrefs();};row.append(n,input,b);$('playerList').append(row);});updateRotationInfo();$('addPlayerBtn').disabled=names.length>=8;}
 function addPlayer(){setupNames=[...$('playerList').querySelectorAll('input')].map(x=>x.value);if(setupNames.length>=8)return;setupNames.push('');renderPlayers();savePrefs();$('playerList').lastElementChild.querySelector('input').focus();}
@@ -1307,7 +1307,7 @@ async function pauseGame(){if(!isTurn()||modalResolve)return;finishStroke();chec
 document.addEventListener('visibilitychange',()=>{if(document.hidden){finishStroke();checkpoint();Sound.stop();hideFx();if(isTurn()&&!modalResolve)pauseGame();}lastTick=performance.now();});
 window.addEventListener('pagehide',()=>{finishStroke();checkpoint();Sound.stop();});
 window.addEventListener('beforeunload',e=>{if(game&&['draw','word','topic','pass'].includes(screen)){checkpoint();e.preventDefault();e.returnValue='';}});
-
+​
 function scoreRound(g){const auto=g.names.map(()=>0);const last=g.entries.at(-1);const perfect=last?.type==='word'&&normal(last.word)===normal(g.topic);if(perfect)auto.forEach((_,i)=>auto[i]++);g.entries.forEach((h,i)=>{if(h.type==='word'&&i<g.names.length&&normal(h.word)===normal(g.topic))auto[h.player]++;if(h.type==='draw'){const expected=i===0?g.topic:g.entries[i-1].word,next=g.entries[i+1];if(next?.type==='word'&&normal(next.word)===normal(expected))auto[h.player]++;}});return {auto,perfect};}
 function renderResult(){const {auto,perfect}=scoreRound(game);$('resultTopic').textContent='お題は「'+game.topic+'」でした。';const chain=$('chain');chain.replaceChildren();addChain('最初のお題',game.topic);game.entries.forEach((h,i)=>{const arrow=document.createElement('div');arrow.className='chain-arrow';arrow.textContent='↓';chain.appendChild(arrow);addChain(game.names[h.player]+' さんの'+(h.type==='draw'?'絵':'答え')+(i===game.names.length?'（締め）':''),h.type==='word'?h.word:null,h.type==='draw'?picture(h.strokes,h.canvasSize):null);});
   $('autoRows').replaceChildren();if(perfect){const b=document.createElement('div');b.className='banner';b.textContent='最後まで伝わりました！ 全員 +1';$('autoRows').append(b);}game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="pt">+'+auto[i]+'</span>';$('autoRows').append(row);});$('manualRows').replaceChildren();game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="stepper"><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を減らす">−</button><span class="step-val" id="manual'+i+'">'+game.manual[i]+'</span><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を増やす">＋</button></span>';const bs=row.querySelectorAll('button');bs[0].onclick=()=>changeManual(i,-1);bs[1].onclick=()=>changeManual(i,1);$('manualRows').append(row);});renderTotals();Sound.fanfare();celebrate();}
@@ -1319,7 +1319,7 @@ function wipeRoundViews(){renderDrawing(ctx,[]);$('guessImg').removeAttribute('s
 function sessionStorageRemove(){try{sessionStorage.removeItem(SESSION_KEY);}catch{}$('resumeBtn').hidden=true;}
 async function resetAll(){if(modalResolve||!permitted())return;const ok=await openDialog('ゲームを終了しますか？','このゲームの絵・答え・スコアを削除します。プレイヤー名と設定は端末に残ります。',[{label:'キャンセル',value:false},{label:'終了する',value:true,primary:true}]);if(!ok)return;stopTimer();game=null;pendingSession=null;backStack=[];draft=[];undoStack=[];redoStack=[];sessionStorageRemove();wipeRoundViews();show('title');}
 async function deleteSaved(){if(modalResolve)return;const yes=await openDialog('このゲームの保存データを削除','名前・設定・進行中のゲームをこのブラウザーから削除します。',[{label:'キャンセル',value:false},{label:'削除する',value:true,primary:true}]);if(!yes)return;try{for(const k of [PREF_KEY,'tele_prefs','tele_sound'])localStorage.removeItem(k);}catch{}game=null;pendingSession=null;sessionStorageRemove();setupNames=['','',''];selectedDiffs=new Set(['easy']);timeSetting='normal';backStack=[];renderPlayers();updateChips();wipeRoundViews();show('title');message('保存データを削除しました。');}
-
+​
 function drawStroke(c,s){c.strokeStyle=s.color;c.fillStyle=s.color;c.lineWidth=s.size;c.lineCap='round';c.lineJoin='round';const ps=s.points;if(ps.length===1){c.beginPath();c.arc(ps[0][0],ps[0][1],s.size/2,0,Math.PI*2);c.fill();return;}c.beginPath();c.moveTo(...ps[0]);for(let i=1;i<ps.length-1;i++)c.quadraticCurveTo(ps[i][0],ps[i][1],(ps[i][0]+ps[i+1][0])/2,(ps[i][1]+ps[i+1][1])/2);c.lineTo(...ps.at(-1));c.stroke();}
 function renderDrawing(c,strokes){c.fillStyle='#fff';c.fillRect(0,0,c.canvas.width,c.canvas.height);strokes.forEach(s=>drawStroke(c,s));}
 function redraw(){renderDrawing(ctx,draft);if(activeStroke)drawStroke(ctx,activeStroke);updateTools();}
@@ -1354,14 +1354,15 @@ function fitCanvas(){
 }
 document.addEventListener('pointerdown',e=>{if(!$('drawingSettings').contains(e.target))closeDrawingSettings();},{capture:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawingSettings();});
-
+​
 let fitId;window.addEventListener('resize',()=>{clearTimeout(fitId);fitId=setTimeout(fitCanvas,120);});
 $('wordInput').addEventListener('input',()=>{wordValue=$('wordInput').value;scheduleSave();});
 $('wordInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();submitWord();}});
 document.addEventListener('pointerdown',e=>{Sound.unlock();const b=e.target.closest('button');if(b&&!b.disabled&&b.id!=='soundBtn')Sound.tap();},{passive:true});
-
+​
 loadPrefs();renderPlayers();updateChips();updateSound();updateTools();renderDrawing(ctx,[]);show('title');loadSession();
-
+​
 </script>
 </body>
 </html>
+​
