@@ -506,7 +506,7 @@ body{align-items:stretch;}
           <circle cx="46" cy="40" r="3.4" fill="#fff" opacity=".8"/>
         </svg>
       </div>
-      <p class="edition">LOCAL PARTY GAME · RC 2.1</p><h1 class="wordmark">テレストレーション</h1>
+      <p class="edition">DRAW · GUESS · PASS</p><h1 class="wordmark">テレストレーション</h1>
       <p class="tagline">絵と言葉で伝える、みんなの伝言ゲーム</p>
       <div class="title-actions">
         <button id="resumeBtn" hidden class="btn btn-primary btn-block" onclick="resumeGame()">つづきから</button><button class="btn btn-primary btn-block" onclick="navTo('setup')">はじめる</button>
@@ -558,7 +558,7 @@ body{align-items:stretch;}
 
     <!-- PASS -->
     <section id="passScreen" class="screen center">
-      <p class="pass-kicker">次の人に端末を渡してください</p>
+      <img class="tabletop-pass-card" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNDAwIDYwMCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImgiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTRMMTQgME0tNyA3TDctN003IDIxTDIxIDciIHN0cm9rZT0iIzI3M2M0YSIgc3Ryb2tlLXdpZHRoPSIuNDUiIG9wYWNpdHk9Ii4xNyIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI2MDAiIHJ4PSIxNiIgZmlsbD0iI2U3YzU1MyIvPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjM4MCIgaGVpZ2h0PSI1ODAiIHJ4PSIxMSIgZmlsbD0idXJsKCNoKSIgc3Ryb2tlPSIjMjczYzRhIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxyZWN0IHg9IjIyIiB5PSIyMiIgd2lkdGg9IjM1NiIgaGVpZ2h0PSI1NTYiIHJ4PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiMyNzNjNGEiIHN0cm9rZS13aWR0aD0iLjYiLz48cGF0aCBkPSJNMzQgNzNoMzMyTTM0IDUxOGgzMzIiIHN0cm9rZT0iIzI3M2M0YSIgb3BhY2l0eT0iLjYiLz48ZyBmaWxsPSIjMjczYzRhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiI+PHRleHQgeD0iMjAwIiB5PSI1OCIgZm9udC1zaXplPSIxMSIgbGV0dGVyLXNwYWNpbmc9IjMiPlRIRSBQQVNTSU5HIFNLRVRDSEJPT0s8L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIxMzIiIGZvbnQtc2l6ZT0iMjYiIGxldHRlci1zcGFjaW5nPSI0IiBmb250LXdlaWdodD0iYm9sZCI+VEVMRVNUUkFUSU9OUzwvdGV4dD48dGV4dCB4PSIyMDAiIHk9IjQ2NyIgZm9udC1zaXplPSIxMCIgbGV0dGVyLXNwYWNpbmc9IjIiPkRSQVcg4oCiIEdVRVNTIOKAoiBQQVNTPC90ZXh0Pjx0ZXh0IHg9IjIwMCIgeT0iNTUxIiBmb250LXNpemU9IjkiIGxldHRlci1zcGFjaW5nPSI0Ij5UQUJMRVRPUCBDT0xMRUNUSU9OPC90ZXh0PjwvZz48ZyBjb2xvcj0iIzI3M2M0YSI+PGcgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0xMTYgMjMwbDE2Mi0xOSAyMiAxNjktMTYyIDE5eiIgZmlsbD0iI2Y2ZWZjZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEwNSAyMTZsMTYzIDYtNiAxNzItMTYzLTZ6IiBmaWxsPSIjZjhmNGRmIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTA3IDI0NWwxNTkgNk0xMDYgMjY3bDE1OSA2TTEwNiAyODlsMTU5IDZNMTA1IDMxMWwxNTkgNk0xMDQgMzMzbDE1OSA2TTEwNCAzNTVsMTU5IDYiIHN0cm9rZT0iIzljYTdhYiIgb3BhY2l0eT0iLjU1Ii8+PHBhdGggZD0iTTEyMiAyMTN2LTExcTAtOCA2LTh0NiA4djEzTTE1NyAyMTR2LTExcTAtOCA2LTh0NiA4djEzTTE5MiAyMTV2LTExcTAtOCA2LTh0NiA4djEzTTIyNyAyMTZ2LTExcTAtOCA2LTh0NiA4djEzIiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTQ1IDI5M3YtMjVsMjAgMTVxMTUtOSAyOCAxbDIwLTE1djI5cTggMzktMzQgMzktMzgtMS0zNC00NHoiIGZpbGw9IiNlOWNlNzMiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xNTkgMzAxaDVtMjMgMWg1TTE3MiAzMTVsNyA3IDgtN00xNTAgMzE4bC0xOS01TTE0OSAzMjRsLTIxIDNNMjA0IDMxOWwyMC00TTIwNCAzMjVsMjIgNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTI3OSAyNDNxMzQgMCAyOSAzN3QtMjIgNDNxLTIyIDE2IDIgMzQiIHN0cm9rZT0iI2I5NTQ0MCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L2c+PGcgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMSI+PC9nPjwvZz48ZyBmaWxsPSIjMjczYzRhIj48cGF0aCBkPSJNMzUgMzRoMjJ2MkgzN3YyMGgtMnpNMzY1IDM0aC0yMnYyaDIwdjIwaDJ6TTM1IDU2NmgyMnYtMkgzN3YtMjBoLTJ6TTM2NSA1NjZoLTIydi0yaDIwdi0yMGgyeiIvPjwvZz48L3N2Zz4=" alt="" aria-hidden="true"><p class="pass-kicker">次の人に端末を渡してください</p>
       <div class="pass-name" id="passName"></div>
       <div class="pass-badge" id="passWhat"></div>
       <button class="btn btn-primary" style="min-width:200px;" id="passReady">準備できた</button>
@@ -1383,5 +1383,64 @@ document.addEventListener('pointerdown',e=>{Sound.unlock();const b=e.target.clos
 loadPrefs();renderPlayers();updateChips();updateSound();updateTools();renderDrawing(ctx,[]);show('title');loadSession();$('bootNotice')?.remove();
 
 </script>
+
+<style>
+html.reload-protected,html.reload-protected body{overscroll-behavior-y:none}
+</style>
+<script>
+/* Prevent accidental refresh during play without disabling normal scrolling or zoom. */
+(()=>{
+ const playing=()=>!!document.querySelector("#passScreen.active,#topicScreen.active,#drawScreen.active,#wordScreen.active");
+ const sync=()=>document.documentElement.classList.toggle('reload-protected',playing());
+ new MutationObserver(sync).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden']});
+ sync();
+ window.addEventListener('keydown',e=>{
+  if(playing()&&(e.key==='F5'||((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='r')))e.preventDefault();
+ });
+ let touch=null;
+ document.addEventListener('touchstart',e=>{
+  touch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null;
+ },{passive:true});
+ document.addEventListener('touchmove',e=>{
+  if(!playing()||!touch||e.touches.length!==1)return;
+  const t=e.touches[0],dy=t.clientY-touch.y,dx=t.clientX-touch.x;
+  touch={x:t.clientX,y:t.clientY};
+  if(dy<=0||dy<=Math.abs(dx))return;
+  const canScrollUp=e.composedPath().some(el=>el instanceof Element&&
+   el.scrollHeight>el.clientHeight+1&&el.scrollTop>0&&
+   /^(auto|scroll|overlay)$/.test(getComputedStyle(el).overflowY));
+  if(!canScrollUp&&(document.scrollingElement?.scrollTop||0)<=0&&e.cancelable)e.preventDefault();
+ },{passive:false});
+ const reset=()=>{touch=null};
+ document.addEventListener('touchend',reset,{passive:true});
+ document.addEventListener('touchcancel',reset,{passive:true});
+})();
+</script>
+<style id="tabletop-edition">
+:root{--tabletop-back:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNDAwIDYwMCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImgiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTRMMTQgME0tNyA3TDctN003IDIxTDIxIDciIHN0cm9rZT0iIzI3M2M0YSIgc3Ryb2tlLXdpZHRoPSIuNDUiIG9wYWNpdHk9Ii4xNyIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI2MDAiIHJ4PSIxNiIgZmlsbD0iI2U3YzU1MyIvPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjM4MCIgaGVpZ2h0PSI1ODAiIHJ4PSIxMSIgZmlsbD0idXJsKCNoKSIgc3Ryb2tlPSIjMjczYzRhIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxyZWN0IHg9IjIyIiB5PSIyMiIgd2lkdGg9IjM1NiIgaGVpZ2h0PSI1NTYiIHJ4PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiMyNzNjNGEiIHN0cm9rZS13aWR0aD0iLjYiLz48cGF0aCBkPSJNMzQgNzNoMzMyTTM0IDUxOGgzMzIiIHN0cm9rZT0iIzI3M2M0YSIgb3BhY2l0eT0iLjYiLz48ZyBmaWxsPSIjMjczYzRhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiI+PHRleHQgeD0iMjAwIiB5PSI1OCIgZm9udC1zaXplPSIxMSIgbGV0dGVyLXNwYWNpbmc9IjMiPlRIRSBQQVNTSU5HIFNLRVRDSEJPT0s8L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIxMzIiIGZvbnQtc2l6ZT0iMjYiIGxldHRlci1zcGFjaW5nPSI0IiBmb250LXdlaWdodD0iYm9sZCI+VEVMRVNUUkFUSU9OUzwvdGV4dD48dGV4dCB4PSIyMDAiIHk9IjQ2NyIgZm9udC1zaXplPSIxMCIgbGV0dGVyLXNwYWNpbmc9IjIiPkRSQVcg4oCiIEdVRVNTIOKAoiBQQVNTPC90ZXh0Pjx0ZXh0IHg9IjIwMCIgeT0iNTUxIiBmb250LXNpemU9IjkiIGxldHRlci1zcGFjaW5nPSI0Ij5UQUJMRVRPUCBDT0xMRUNUSU9OPC90ZXh0PjwvZz48ZyBjb2xvcj0iIzI3M2M0YSI+PGcgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0xMTYgMjMwbDE2Mi0xOSAyMiAxNjktMTYyIDE5eiIgZmlsbD0iI2Y2ZWZjZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEwNSAyMTZsMTYzIDYtNiAxNzItMTYzLTZ6IiBmaWxsPSIjZjhmNGRmIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTA3IDI0NWwxNTkgNk0xMDYgMjY3bDE1OSA2TTEwNiAyODlsMTU5IDZNMTA1IDMxMWwxNTkgNk0xMDQgMzMzbDE1OSA2TTEwNCAzNTVsMTU5IDYiIHN0cm9rZT0iIzljYTdhYiIgb3BhY2l0eT0iLjU1Ii8+PHBhdGggZD0iTTEyMiAyMTN2LTExcTAtOCA2LTh0NiA4djEzTTE1NyAyMTR2LTExcTAtOCA2LTh0NiA4djEzTTE5MiAyMTV2LTExcTAtOCA2LTh0NiA4djEzTTIyNyAyMTZ2LTExcTAtOCA2LTh0NiA4djEzIiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTQ1IDI5M3YtMjVsMjAgMTVxMTUtOSAyOCAxbDIwLTE1djI5cTggMzktMzQgMzktMzgtMS0zNC00NHoiIGZpbGw9IiNlOWNlNzMiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xNTkgMzAxaDVtMjMgMWg1TTE3MiAzMTVsNyA3IDgtN00xNTAgMzE4bC0xOS01TTE0OSAzMjRsLTIxIDNNMjA0IDMxOWwyMC00TTIwNCAzMjVsMjIgNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTI3OSAyNDNxMzQgMCAyOSAzN3QtMjIgNDNxLTIyIDE2IDIgMzQiIHN0cm9rZT0iI2I5NTQ0MCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L2c+PGcgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMSI+PC9nPjwvZz48ZyBmaWxsPSIjMjczYzRhIj48cGF0aCBkPSJNMzUgMzRoMjJ2MkgzN3YyMGgtMnpNMzY1IDM0aC0yMnYyaDIwdjIwaDJ6TTM1IDU2NmgyMnYtMkgzN3YtMjBoLTJ6TTM2NSA1NjZoLTIydi0yaDIwdi0yMGgyeiIvPjwvZz48L3N2Zz4=");--tabletop-emblem:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjcwIDE3MCAyNjAgMjYwIj48ZyBjb2xvcj0iIzI3M2M0YSI+PGcgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0xMTYgMjMwbDE2Mi0xOSAyMiAxNjktMTYyIDE5eiIgZmlsbD0iI2Y2ZWZjZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEwNSAyMTZsMTYzIDYtNiAxNzItMTYzLTZ6IiBmaWxsPSIjZjhmNGRmIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTA3IDI0NWwxNTkgNk0xMDYgMjY3bDE1OSA2TTEwNiAyODlsMTU5IDZNMTA1IDMxMWwxNTkgNk0xMDQgMzMzbDE1OSA2TTEwNCAzNTVsMTU5IDYiIHN0cm9rZT0iIzljYTdhYiIgb3BhY2l0eT0iLjU1Ii8+PHBhdGggZD0iTTEyMiAyMTN2LTExcTAtOCA2LTh0NiA4djEzTTE1NyAyMTR2LTExcTAtOCA2LTh0NiA4djEzTTE5MiAyMTV2LTExcTAtOCA2LTh0NiA4djEzTTIyNyAyMTZ2LTExcTAtOCA2LTh0NiA4djEzIiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTQ1IDI5M3YtMjVsMjAgMTVxMTUtOSAyOCAxbDIwLTE1djI5cTggMzktMzQgMzktMzgtMS0zNC00NHoiIGZpbGw9IiNlOWNlNzMiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xNTkgMzAxaDVtMjMgMWg1TTE3MiAzMTVsNyA3IDgtN00xNTAgMzE4bC0xOS01TTE0OSAzMjRsLTIxIDNNMjA0IDMxOWwyMC00TTIwNCAzMjVsMjIgNSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTI3OSAyNDNxMzQgMCAyOSAzN3QtMjIgNDNxLTIyIDE2IDIgMzQiIHN0cm9rZT0iI2I5NTQ0MCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L2c+PC9nPjwvc3ZnPg==");}
+
+/* A passing sketchbook with notebook pages and a chain of signed drawings. */
+:root{color-scheme:light;--page:#e8e5d6;--bg:#f4f0de;--surface:#fffcf0;--surface2:#e8e3cd;--border:#8d9e9740;--border-strong:#7c92886b;--text:#283f49;--muted:#687972;--accent:#355f74;--accent-2:#ad6447;--accent-soft:#dae4db;--gold:#b28b32;--green:#477c60;--green-soft:#dce8d6;--orange:#a86b37;--orange-soft:#eee0c1;--red:#ad4f44;--red-soft:#eedbd0;--radius:5px;--shadow:0 3px 0 #727e6233;--shadow-lg:0 18px 45px #30483d35}
+html,body,.app{background:var(--bg)!important;color:var(--text)}.topbar{background:#ece8d6!important;border-bottom:1px solid #a2ad9655;box-shadow:0 2px 0 #fff8}
+.card,.topic-card,.chain-item{background:#fffdf2;border:1px solid #aab39d;border-radius:3px;box-shadow:0 4px 0 #84927433}
+.card-title,.label{letter-spacing:.08em;color:#526e70}.card-title{border-bottom:1px solid #a7b39a55;padding-bottom:9px}
+.logo{background:var(--tabletop-emblem) center/contain no-repeat!important;border-radius:0;box-shadow:none;width:105px;height:105px}.logo>*{visibility:hidden}
+.edition{color:#8b6d36}.title-foot,.privacy-note{color:#65776d}.wordmark{color:#2c4c58!important;letter-spacing:.02em}
+.btn{border-radius:5px}.btn-primary,.btn-primary:hover{background:#2c5f75;color:#fff8df;box-shadow:0 3px 0 #183e4e}
+.btn-quiet{background:#eae5d3;color:#375966;border-color:#9bad95}.text-button{color:#4a6a70}
+.topic-card{position:relative;background:repeating-linear-gradient(0deg,transparent 0 27px,#6e8b9024 27px 28px),#fffcee;border-left:4px solid #d3af4d;padding:24px 18px}
+.topic-text{font-family:Georgia,'Yu Mincho',serif;color:#294e62}.topic-card:before{content:'お題カード';font-size:10px;letter-spacing:.2em;display:block;color:#917537;margin-bottom:14px}
+.tabletop-pass-card{display:block;flex:none;width:88px;height:132px;object-fit:contain;margin:0 auto 15px;filter:drop-shadow(0 4px 1px #6c74593b)}
+.row{border-color:#a6b19666}.row .row-name{color:#2e4c56}.stepper{background:#e5e3cf;border-radius:4px}.chip{border-radius:4px}.chip.on{background:#d6dfcb;border-color:#708b77;color:#314f45}
+.chain-item{position:relative;margin:8px 0 10px;padding:17px 15px 15px 24px;border-left:5px solid #d1b353;background:repeating-linear-gradient(0deg,transparent 0 28px,#78949c18 28px 29px),#fffdf1}
+.chain-who{font-family:Georgia,'Yu Mincho',serif;font-size:12px;letter-spacing:.05em;border-bottom:1px solid #899c8640;padding-bottom:8px}.chain-word{color:#32586a}.chain-arrow{color:#a1803d;font-size:21px}
+.guess-img,.chain-img{border-radius:2px;box-shadow:0 2px 6px #40544320}.drawing-popover{background:#f7f4e6;color:#2d4c56;border-color:#9eae96}
+.drawing-popover .text-button{color:#4f6c6b}.tool,.dock-undo,#drawingSettings summary{background:#eee8d6;border-color:#97a992;color:#345563;border-radius:5px}
+.swatch.on{border-color:#344d54}.ref{background:#e4e5d0!important;color:#354f54}#resultScreen .card{background:repeating-linear-gradient(0deg,transparent 0 32px,#3e665111 32px 33px),#fffcee}
+#drawingStage{background:transparent}.drawing-dock{background:var(--bg)}
+@media(max-height:520px){.tabletop-pass-card{display:none}}
+
+#dialogBody{color:#526b6c}.sheet{background:#f7f3e5;color:#2e4d58}.drawing-popover .text-button{color:#4f6c6b}
+</style>
 </body>
 </html>
