@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>/* Short material sounds. No melodic fanfares; all effects decay within 450 ms. */
+window.TableSound=(()=>{
+ const P={"hit": 620, "rub": 2800, "note": 760};
+ let ac=null,lastTap=-1;const voices=new Set(),guards=[];
+ function context(){try{if(!ac){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ac=new C()}if(ac.state==='suspended')ac.resume().catch(()=>{});return ac}catch{return null}}
+ function track(node,g){voices.add(node);node.onended=()=>{voices.delete(node);node.disconnect();g.disconnect()}}
+ function stop(){for(const node of voices)try{node.stop()}catch{}voices.clear()}
+ function modal(f,d,v,at=0){const c=context();if(!c)return;const t=c.currentTime+at;[[1,1],[2.76,.2],[4.8,.055]].forEach(([ratio,amp])=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f*ratio;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,v*amp),t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+d/Math.sqrt(ratio));o.connect(g);g.connect(c.destination);track(o,g);o.start(t);o.stop(t+d+.01)})}
+ function friction(d,f,v,at=0){const c=context();if(!c)return;const t=c.currentTime+at,len=Math.ceil(c.sampleRate*d),b=c.createBuffer(1,len,c.sampleRate),data=b.getChannelData(0);let previous=0;for(let i=0;i<len;i++){previous=.65*previous+.35*(Math.random()*2-1);data[i]=previous*Math.sin(Math.PI*i/len)**1.4}const src=c.createBufferSource(),filter=c.createBiquadFilter(),g=c.createGain();src.buffer=b;filter.type='bandpass';filter.frequency.value=f;filter.Q.value=.65;g.gain.value=v;src.connect(filter);filter.connect(g);g.connect(c.destination);voices.add(src);src.onended=()=>{voices.delete(src);src.disconnect();filter.disconnect();g.disconnect()};src.start(t)}
+ function pluck(f,d,v,at=0){const c=context();if(!c)return;const t=c.currentTime+at;[1,2,3,4].forEach((h,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f*h;g.gain.setValueAtTime(v/(h*h),t);g.gain.exponentialRampToValueAtTime(.0001,t+d/(1+i*.4));o.connect(g);g.connect(c.destination);track(o,g);o.start(t);o.stop(t+d+.01)})}
+ function play(kind){if(document.hidden)return;const c=context();if(!c)return;if(kind==='tap'){if(c.currentTime-lastTap<.045)return;lastTap=c.currentTime;friction(.025,P.rub,.065);modal(P.hit,.045,.025);return}
+  if(kind==='paper'){friction(.13,P.rub,.18);friction(.04,P.rub*.6,.08,.09);return}
+  if(kind==='tick'){modal(P.hit*1.65,.035,.022);return}
+  if(kind==='place'){friction(.035,P.rub*.55,.13);modal(P.hit,.09,.05);return}
+  if(kind==='fail'||kind==='timeup'){modal(P.hit*.7,.16,.055);friction(.055,450,.13,.025);return}
+  if(kind==='reveal'){friction(.18,P.rub,.15);modal(P.hit,.12,.035,.1);return}
+  if(kind==='confirm'){friction(.05,P.rub,.1);modal(P.hit,.12,.045,.035);return}
+  const voice=P.string?pluck:modal;voice(P.note,.28,.045);voice(P.note*1.5,.27,.025,.09);friction(.055,P.rub*.65,.06);
+ }
+ function install(object,allowed,mapping){guards.push(allowed);for(const [name,kind]of Object.entries(mapping))object[name]=()=>{if(allowed())play(kind)};for(const name of ['toggle','setEnabled','setPrivate','stop','drumStop']){if(typeof object[name]!=='function')continue;const old=object[name];object[name]=function(...args){stop();return old.apply(this,args)}}}
+ new MutationObserver(()=>{if(guards.some(allowed=>!allowed()))stop()}).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','hidden']});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('pagehide',stop);
+ return{play,stop,install};
+})();
+</script>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -587,7 +612,8 @@ body{align-items:stretch;}
         <canvas id="drawCanvas" aria-label="お絵かき用キャンバス。指、ペン、マウスで描けます。" role="img"></canvas>
       </div>
       <div class="drawing-dock">
-        <button class="tool dock-undo" id="undoBtn" onclick="undoStroke()" aria-label="一手戻す" title="一手戻す">戻す</button>
+        <button class="tool dock-undo" id="undoBtn" onclick="undoStroke()" aria-label="一手戻す" title="一手戻す">↶</button>
+        <button class="tool dock-undo" id="redoBtn" onclick="redoStroke()" aria-label="やり直す" title="やり直す">↷</button>
         <details id="drawingSettings">
           <summary aria-label="ペンの太さ・消しゴムの設定">ペン設定</summary>
           <div class="drawing-popover">
@@ -599,7 +625,6 @@ body{align-items:stretch;}
                 <button class="tool" data-size="18" onclick="setSize(this)">太</button>
               </div>
               <button class="tool" id="eraserBtn" onclick="toggleEraser()">消しゴム</button>
-              <button class="tool" id="redoBtn" onclick="redoStroke()">やり直す</button>
               <button class="tool" onclick="clearCanvas(true)">全消し</button>
             </div>
             <button class="text-button" onclick="closeDrawingSettings()">設定を閉じる</button>
@@ -639,11 +664,11 @@ body{align-items:stretch;}
           自分の絵が直前のお題どおりに伝わった → <b>+1</b><br>奇数人数の締めの回答には個人点なし。<br>全角・半角／ひらがな・カタカナは同一と判定。漢字や言い換えは手動で加点してください。
         </div>
         <div class="card">
-          <div class="card-title">このラウンドの自動得点</div>
+          <div class="card-title">このラウンドの得点</div>
           <div id="autoRows"></div>
         </div>
         <div class="card">
-          <div class="card-title">手動加点（表記違いの補正・ナイス絵に）</div>
+          <div class="card-title">ボーナス加点（ナイス絵などに）</div>
           <div id="manualRows"></div>
         </div>
         <div class="card" style="background:var(--surface);">
@@ -1200,6 +1225,7 @@ const INKS = ['#1C1C1E','#D9303B','#2466DB','#16824D','#AE6B08','#7951CC'];
 const INK_NAMES = ['黒','赤','青','緑','黄土','紫'];
 let screen='title', game=null, backStack=[], pendingSession=null;
 let selectedDiffs=new Set(['easy']),timeSetting='normal',setupNames=['','',''];
+let turnDrafts={};
 let draft=[],undoStack=[],redoStack=[],activeStroke=null,pointerId=null;
 let ink=INKS[0],penSize=8,eraser=false,wordValue='';
 let timerId=null,remaining=null,lastTick=0,paused=false,expiryShown=false;
@@ -1256,7 +1282,7 @@ function closeDialog(value=false){
   if(focusBefore?.isConnected&&!focusBefore.closest('[hidden]'))focusBefore.focus({preventScroll:true});
   resolve(value);
 }
-function openRules(){openDialog('遊び方','① 最初の人がお題を見て絵を描きます。\n② 次の人は絵だけを見て、言葉で答えます。\n③ その言葉だけを見て次の人が描き、交互に伝えます。\n④ 奇数人数では、最初の人が最後の絵に答えて締めくくります。\n\n元のお題と答えが一致：回答者 +1。絵が直前のお題どおりに伝わる：描いた人 +1。最後の答えが元のお題と一致：全員 +1。奇数人数の締めの回答には個人点を付けません。\n\n全角・半角、ひらがな・カタカナ、空白は同じと判定します。漢字・読み方・言い換えは自動では判断しないため、結果画面で加点できます。\n\n文字や数字を書かず、絵だけで伝えましょう。得点よりも伝言の変化を楽しんでください。');}
+function openRules(){openDialog('遊び方','① 最初の人がお題を見て絵を描きます。\n② 次の人は絵だけを見て、言葉で答えます。\n③ その言葉だけを見て次の人が描き、交互に伝えます。\n④ 奇数人数では、最初の人が最後の絵に答えて締めくくります。\n\n元のお題と答えが一致：回答者 +1。絵が直前のお題どおりに伝わる：描いた人 +1。最後の答えが元のお題と一致：全員 +1。奇数人数の締めの回答には個人点を付けません。\n\n正解・不正解は、結果画面でみんなが判定します。ひらがな・カタカナ・漢字などの表記だけで不正解にはしません。最初のお題に合う答えか、直前のお題が絵で伝わったかをそれぞれ判定してください。\n\n文字や数字を書かず、絵だけで伝えましょう。得点よりも伝言の変化を楽しんでください。');}
 document.addEventListener('keydown',e=>{
   if(!modalResolve)return;
   if(e.key==='Escape'){e.preventDefault();const first=$('dialogActions').querySelector('button');first.click();}
@@ -1273,7 +1299,9 @@ function setTime(v){if(!Object.hasOwn(TIMES,v))return;timeSetting=v;updateChips(
 function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify({names:[...$('playerList').querySelectorAll('input')].map(x=>x.value),diffs:[...selectedDiffs],time:timeSetting}));}catch{storageNotice();}}
 function storageNotice(){if(storageWarned)return;storageWarned=true;$('storageWarning').hidden=false;}
 function loadPrefs(){try{let p=JSON.parse(localStorage.getItem(PREF_KEY));if(!p){const old=JSON.parse(localStorage.getItem('tele_prefs'));if(old)p={names:old.players,diffs:old.diffs,time:old.time};}if(!p||typeof p!=='object')return;if(Array.isArray(p.names)&&p.names.length>=2&&p.names.length<=8&&p.names.every(x=>typeof x==='string'))setupNames=p.names.map(x=>x.slice(0,12));if(Array.isArray(p.diffs)){const ds=p.diffs.filter(d=>Object.hasOwn(TOPICS,d)||d==='custom');if(ds.length)selectedDiffs=new Set(ds.includes('custom')?['custom']:ds);}if(Object.hasOwn(TIMES,p.time))timeSetting=p.time;}catch{}}
-function pack(){return {screen,game:clone(game),draft:clone(draft),canvasSize:[canvas.width,canvas.height],wordValue:$('wordInput').value,remaining};}
+function turnKey(){return game?JSON.stringify([game.round,game.topic,game.names,game.turn,screen]):'';}
+function rememberTurn(){if(!isTurn()||!game)return;turnDrafts[turnKey()]={draft:clone(draft),canvasSize:[canvas.width,canvas.height],wordValue:$('wordInput').value,remaining,undoStack:clone(undoStack),redoStack:clone(redoStack),ink,penSize,eraser};}
+function pack(){rememberTurn();return {screen,game:clone(game),draft:clone(draft),canvasSize:[canvas.width,canvas.height],wordValue:$('wordInput').value,remaining,undoStack:clone(undoStack),redoStack:clone(redoStack),turnDrafts:clone(turnDrafts)};}
 function checkpoint(){clearTimeout(saveId);if(!game){if(screen==='setup')sessionStorageRemove();return;}try{sessionStorage.setItem(SESSION_KEY,JSON.stringify({v:2,state:pack()}));}catch{storageNotice();}}
 function scheduleSave(){clearTimeout(saveId);saveId=setTimeout(checkpoint,250);}
 function validSession(p){
@@ -1286,17 +1314,23 @@ function validSession(p){
   if((s.screen==='topic'&&g.turn!==0)||(s.screen==='word'&&(g.turn===0||g.turn%2!==1))||(s.screen==='draw'&&g.turn%2!==0)||(s.screen==='setup'&&!g.committed)||(s.screen!=='setup'&&g.committed))return false;
   if(!Array.isArray(g.entries)||g.entries.length>n+n%2||typeof s.wordValue!=='string'||s.wordValue.length>30||!(s.remaining===null||(Number.isFinite(s.remaining)&&s.remaining>=0&&s.remaining<=90)))return false;
   if(!validCanvasSize(s.canvasSize)||!validStrokes(s.draft))return false;
+  const historyOK=a=>a===undefined||(Array.isArray(a)&&a.length<=20&&a.every(validStrokes));
+  if(!historyOK(s.undoStack)||!historyOK(s.redoStack))return false;
+  if(s.turnDrafts!==undefined&&(!s.turnDrafts||typeof s.turnDrafts!=='object'||Array.isArray(s.turnDrafts)||Object.keys(s.turnDrafts).length>20||Object.values(s.turnDrafts).some(d=>!d||!validStrokes(d.draft)||!validCanvasSize(d.canvasSize)||!historyOK(d.undoStack)||!historyOK(d.redoStack)||typeof d.wordValue!=='string'||d.wordValue.length>30||!(d.remaining===null||Number.isFinite(d.remaining)&&d.remaining>=0&&d.remaining<=90))))return false;
+  if(g.judgments!==undefined&&(!g.judgments||typeof g.judgments!=='object'||Array.isArray(g.judgments)||Object.entries(g.judgments).some(([key,value])=>!judgingTasks(g).some(t=>t.key===key)||typeof value!=='boolean')))return false;
   return g.entries.every((h,i)=>h.player===g.order[i%n]&&((i%2===0&&h.type==='draw'&&validStrokes(h.strokes)&&validCanvasSize(h.canvasSize))||(i%2===1&&h.type==='word'&&typeof h.word==='string'&&h.word.length<=30)))&&g.entries.length===g.turn;
 }
 function validStrokes(a){return Array.isArray(a)&&a.length<=500&&a.every(s=>s&&typeof s.color==='string'&&[...INKS,'#fff'].includes(s.color)&&Number.isFinite(s.size)&&s.size>=1&&s.size<=72&&Array.isArray(s.points)&&s.points.length>0&&s.points.length<=5000&&s.points.every(p=>Array.isArray(p)&&p.length===2&&p.every(v=>Number.isFinite(v)&&v>=-100&&v<=1400)));}
 function loadSession(){try{const p=JSON.parse(sessionStorage.getItem(SESSION_KEY));if(validSession(p)){pendingSession=p.state;$('resumeBtn').hidden=false;}}catch{}}
-async function resumeGame(){if(!pendingSession||!permitted())return;const s=pendingSession;const yes=await openDialog('この端末のゲームを再開','前回のプレイヤー本人が操作してください。次に、保存した画面が表示されます。',[{label:'キャンセル',value:false},{label:'再開する',value:true,primary:true}]);if(!yes)return;game=clone(s.game);setupNames=game.names.slice();timeSetting=game.time;renderPlayers();updateChips();backStack=[];apply(s);pendingSession=null;message('保存済みの内容を復元しました。戻る履歴は再読み込み時にリセットされます。');}
+async function resumeGame(){if(!pendingSession||!permitted())return;const s=pendingSession;const yes=await openDialog('この端末のゲームを再開','前回のプレイヤー本人が操作してください。次に、保存した画面が表示されます。',[{label:'キャンセル',value:false},{label:'再開する',value:true,primary:true}]);if(!yes)return;turnDrafts=s.turnDrafts||{};game=clone(s.game);setupNames=game.names.slice();timeSetting=game.time;renderPlayers();updateChips();backStack=[];apply(s);pendingSession=null;message('保存済みの内容を復元しました。戻る履歴は再読み込み時にリセットされます。');}
 function pushBack(){if(backStack.length>=18)backStack.shift();backStack.push(pack());}
-function apply(s){stopTimer();const size=s.canvasSize||[800,600];canvas.width=size[0];canvas.height=size[1];game=clone(s.game);draft=clone(s.draft);wordValue=s.wordValue;remaining=s.remaining;undoStack=[];redoStack=[];show(s.screen,true);}
-async function goBack(){if(!backStack.length||modalResolve||!permitted())return;const yes=await openDialog('ひとつ前に戻りますか？','今の入力は破棄されます。前の人のお題や回答が表示されることがあるため、前の人に端末を返してから戻ってください。',[{label:'キャンセル',value:false},{label:'前に戻る',value:true,primary:true}]);if(!yes)return;finishStroke();const s=backStack.pop();apply(s);}
+function apply(s){stopTimer();const size=s.canvasSize||[800,600];canvas.width=size[0];canvas.height=size[1];game=clone(s.game);draft=clone(s.draft);wordValue=s.wordValue;remaining=s.remaining;undoStack=clone(s.undoStack||[]);redoStack=clone(s.redoStack||[]);show(s.screen,true);}
+async function goBack(){if(!backStack.length||modalResolve||!permitted())return;const yes=await openDialog('ひとつ前に戻りますか？','描きかけの絵と入力は保存します。前の人のお題や回答が表示されることがあるため、前の人に端末を返してから戻ってください。',[{label:'キャンセル',value:false},{label:'前に戻る',value:true,primary:true}]);if(!yes)return;finishStroke();rememberTurn();const s=backStack.pop();apply(s);}
 function navTo(target){if(modalResolve||!permitted())return;if(target==='setup'&&screen==='title'){if(pendingSession){openDialog('保存済みのゲームがあります','新しく始めると保存済みの進行は上書きされます。',[{label:'キャンセル',value:false},{label:'新しく始める',value:true,primary:true}]).then(ok=>{if(ok){pendingSession=null;game=null;sessionStorageRemove();backStack=[];show('setup');}});}else{pushBack();show('setup');}return;}if(screen==='pass'&&target===nextScreen()){pushBack();show(target);return;}if(screen==='topic'&&target==='draw'){pushBack();show('draw');}}
 function nextScreen(){return game?.turn===0?'topic':game?.turn%2?'word':'draw';}
 function show(target,restore=false){closeDrawingSettings();lockNavigation();stopTimer();finishStroke();hideFx();screen=target;message('');document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===target+'Screen'));if(!restore){draft=[];wordValue='';remaining=null;undoStack=[];redoStack=[];}
+  const saved=isTurn()&&turnDrafts[turnKey()];
+  if(saved){canvas.width=saved.canvasSize[0];canvas.height=saved.canvasSize[1];draft=clone(saved.draft);wordValue=saved.wordValue;remaining=saved.remaining;undoStack=clone(saved.undoStack);redoStack=clone(saved.redoStack);ink=saved.ink;penSize=saved.penSize;eraser=saved.eraser;restore=true;}
   $('topbarTitle').textContent=TITLES[target];$('backBtn').disabled=!backStack.length;$('backBtn').style.visibility=target==='title'?'hidden':'visible';$('timer').style.display=isTurn()&&game?.time!=='off'?'inline-flex':'none';$('pauseBtn').hidden=!isTurn();
   if(target==='setup')updateRotationInfo();
   if(target==='pass'){const p=game.order[game.turn%game.names.length];$('passName').textContent=game.names[p];$('passWhat').textContent=nextScreen()==='word'?'絵を見て答える番です':'絵を描く番です';$('passReady').onclick=()=>navTo(nextScreen());}
@@ -1311,13 +1345,14 @@ async function startGame(){if(screen!=='setup'||modalResolve||!permitted())retur
   const same=game&&JSON.stringify(names)===JSON.stringify(game.names),round=same?game.round:0;
   if(game&&!same){const yes=await openDialog('参加者を変更','参加者が変わるため、累計スコアをリセットします。',[{label:'キャンセル',value:false},{label:'開始する',value:true,primary:true}]);if(!yes)return;}
   const totals=same?game.totals.slice():names.map(()=>0),used=same?game.used.slice(-300):[];
-  pushBack();game={names,order:names.map((_,i)=>(i+round)%names.length),round,turn:0,topic,diff,time:timeSetting,entries:[],totals,manual:names.map(()=>0),used:[...used,topic],committed:false};savePrefs();Sound.submit();show('pass');
+  pushBack();turnDrafts={};game={judgments:{},names,order:names.map((_,i)=>(i+round)%names.length),round,turn:0,topic,diff,time:timeSetting,entries:[],totals,manual:names.map(()=>0),used:[...used,topic],committed:false};savePrefs();Sound.submit();show('pass');
 }
 async function submitDraw(force=false){if(screen!=='draw'||modalResolve||!permitted())return;finishStroke();if(!force&&!draft.length){const ok=await openDialog('まだ描かれていません','白紙のまま次の人へ渡しますか？',[{label:'描き続ける',value:false},{label:'白紙で渡す',value:true,primary:true}]);if(!ok)return;}commitDraw();}
-function commitDraw(){if(screen!=='draw')return;finishStroke();pushBack();game.entries.push({player:game.order[game.turn%game.names.length],type:'draw',strokes:clone(draft),canvasSize:[canvas.width,canvas.height]});advance();}
+function clearLaterDrafts(){for(const key of Object.keys(turnDrafts)){try{if(JSON.parse(key)[3]>game.turn)delete turnDrafts[key];}catch{delete turnDrafts[key]}}}
+function commitDraw(){if(screen!=='draw')return;clearLaterDrafts();finishStroke();pushBack();game.entries.push({player:game.order[game.turn%game.names.length],type:'draw',strokes:clone(draft),canvasSize:[canvas.width,canvas.height]});advance();}
 function submitWord(force=false){if(screen!=='word'||modalResolve||!permitted())return;const word=$('wordInput').value.trim();if(!word&&!force){message('答えを入力してください。わからない場合は「わからない」と入力できます。');$('wordInput').focus();return;}commitWord(word||'（時間切れ・未回答）');}
-function commitWord(word){if(screen!=='word')return;pushBack();game.entries.push({player:game.order[game.turn%game.names.length],type:'word',word});advance();}
-function advance(){stopTimer();game.turn++;game.manual=game.names.map(()=>0);Sound.submit();show(game.turn>=game.names.length+game.names.length%2?'result':'pass');}
+function commitWord(word){if(screen!=='word')return;clearLaterDrafts();pushBack();game.entries.push({player:game.order[game.turn%game.names.length],type:'word',word});advance();}
+function advance(){stopTimer();game.turn++;game.judgments={};game.manual=game.names.map(()=>0);Sound.submit();show(game.turn>=game.names.length+game.names.length%2?'result':'pass');}
 function startTimer(restore=false){stopTimer();paused=false;expiryShown=false;const max=TIMES[game.time][screen];remaining=restore&&remaining!==null?remaining:max;lastTick=performance.now();paintTimer();if(!max)return;timerId=setInterval(tickTimer,100);}
 function tickTimer(){if(!isTurn()||document.hidden||paused){lastTick=performance.now();return;}const now=performance.now(),old=Math.ceil(remaining);remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;if(Math.ceil(remaining)!==old){paintTimer();checkpoint();if(remaining>0&&remaining<=5)Sound.tick();}if(remaining<=0&&!expiryShown)timeExpired();}
 function paintTimer(){const max=game&&isTurn()?TIMES[game.time][screen]:0,ratio=max?remaining/max:1;$('timerNum').textContent=Math.ceil(remaining||0);$('timerRing').style.strokeDashoffset=(1-ratio)*119.4;$('timer').classList.toggle('warn',max>0&&remaining<=5);if(isTurn())$(screen==='draw'?'drawBar':'wordBar').style.width=ratio*100+'%';$('timer').setAttribute('aria-label','残り'+Math.ceil(remaining||0)+'秒');}
@@ -1328,13 +1363,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){finishStro
 window.addEventListener('pagehide',()=>{finishStroke();checkpoint();Sound.stop();});
 window.addEventListener('beforeunload',e=>{if(game&&['draw','word','topic','pass'].includes(screen)){checkpoint();e.preventDefault();e.returnValue='';}});
 
-function scoreRound(g){const auto=g.names.map(()=>0);const last=g.entries.at(-1);const perfect=last?.type==='word'&&normal(last.word)===normal(g.topic);if(perfect)auto.forEach((_,i)=>auto[i]++);g.entries.forEach((h,i)=>{if(h.type==='word'&&i<g.names.length&&normal(h.word)===normal(g.topic))auto[h.player]++;if(h.type==='draw'){const expected=i===0?g.topic:g.entries[i-1].word,next=g.entries[i+1];if(next?.type==='word'&&normal(next.word)===normal(expected))auto[h.player]++;}});return {auto,perfect};}
-function renderResult(){const {auto,perfect}=scoreRound(game);$('resultTopic').textContent='お題は「'+game.topic+'」でした。';const chain=$('chain');chain.replaceChildren();addChain('最初のお題',game.topic);game.entries.forEach((h,i)=>{const arrow=document.createElement('div');arrow.className='chain-arrow';arrow.textContent='↓';chain.appendChild(arrow);addChain(game.names[h.player]+' さんの'+(h.type==='draw'?'絵':'答え')+(i===game.names.length?'（締め）':''),h.type==='word'?h.word:null,h.type==='draw'?picture(h.strokes,h.canvasSize):null);});
-  $('autoRows').replaceChildren();if(perfect){const b=document.createElement('div');b.className='banner';b.textContent='最後まで伝わりました！ 全員 +1';$('autoRows').append(b);}game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="pt">+'+auto[i]+'</span>';$('autoRows').append(row);});$('manualRows').replaceChildren();game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="stepper"><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を減らす">−</button><span class="step-val" id="manual'+i+'">'+game.manual[i]+'</span><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を増やす">＋</button></span>';const bs=row.querySelectorAll('button');bs[0].onclick=()=>changeManual(i,-1);bs[1].onclick=()=>changeManual(i,1);$('manualRows').append(row);});renderTotals();Sound.fanfare();celebrate();}
+function judgingTasks(g){const tasks=[];g.entries.forEach((h,i)=>{if(h.type!=='word')return;tasks.push({key:i+':original',i,expected:g.topic,label:'最初のお題に対する答え',award:(i<g.names.length?g.names[h.player]+' +1。':'')+(i===g.entries.length-1?'正解なら全員 +1。':'')+(i===1?'正解なら '+g.names[g.entries[i-1].player]+' の絵にも +1。':'')});if(i>1)tasks.push({key:i+':transmission',i,expected:g.entries[i-2].word,label:'直前の絵に出されたお題',award:'正解なら '+g.names[g.entries[i-1].player]+' の絵に +1。'});});return tasks;}
+function scoreRound(g){const auto=g.names.map(()=>0),j=g.judgments||{},last=g.entries.length-1;const perfect=j[last+':original']===true;if(perfect)auto.forEach((_,i)=>auto[i]++);g.entries.forEach((h,i)=>{if(h.type!=='word')return;if(i<g.names.length&&j[i+':original']===true)auto[h.player]++;if(j[i+(i===1?':original':':transmission')]===true)auto[g.entries[i-1].player]++;});return {auto,perfect,pending:judgingTasks(g).filter(t=>typeof j[t.key]!=='boolean').length};}
+function judgeAnswer(key,value){if(screen!=='result'||game.committed||!judgingTasks(game).some(t=>t.key===key))return;const top=$('resultScreen').scrollTop;game.judgments??={};game.judgments[key]=value;renderResult(true);$('resultScreen').scrollTop=top;checkpoint();}
+function renderResult(quiet=false){const {auto,perfect,pending}=scoreRound(game);$('resultTopic').textContent='お題は「'+game.topic+'」でした。';const chain=$('chain');chain.replaceChildren();addChain('最初のお題',game.topic);game.entries.forEach((h,i)=>{const arrow=document.createElement('div');arrow.className='chain-arrow';arrow.textContent='↓';chain.appendChild(arrow);addChain(game.names[h.player]+' さんの'+(h.type==='draw'?'絵':'答え')+(i===game.names.length?'（締め）':''),h.type==='word'?h.word:null,h.type==='draw'?picture(h.strokes,h.canvasSize):null);if(h.type==='word'){const item=chain.lastElementChild;judgingTasks(game).filter(t=>t.i===i).forEach(t=>{const box=document.createElement('div');box.className='answer-judgment';const ref=document.createElement('p');ref.textContent=t.label+'：「'+t.expected+'」';const note=document.createElement('small');note.textContent=t.award;const buttons=document.createElement('div');buttons.className='judgment-buttons';[true,false].forEach(ok=>{const b=document.createElement('button');b.type='button';b.className='btn btn-quiet';b.textContent=ok?'正解':'不正解';b.setAttribute('aria-pressed',String(game.judgments?.[t.key]===ok));b.onclick=()=>judgeAnswer(t.key,ok);buttons.append(b);});box.append(ref,note,buttons);item.append(box);});}});
+  $('autoRows').replaceChildren();const b=document.createElement('div');b.className='banner';b.textContent=pending?'答え合わせ：あと '+pending+' 件。表記にかかわらず、みんなで正解／不正解を選んでください。':perfect?'最後まで伝わりました！ 全員 +1':'答え合わせが完了しました。';$('autoRows').append(b);game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="pt">+'+auto[i]+'</span>';$('autoRows').append(row);});$('manualRows').replaceChildren();game.names.forEach((p,i)=>{const row=document.createElement('div');row.className='row';row.innerHTML='<span class="row-name">'+escapeHtml(p)+'</span><span class="stepper"><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を減らす">−</button><span class="step-val" id="manual'+i+'">'+game.manual[i]+'</span><button class="step-btn" aria-label="'+escapeHtml(p)+'の加点を増やす">＋</button></span>';const bs=row.querySelectorAll('button');bs[0].onclick=()=>changeManual(i,-1);bs[1].onclick=()=>changeManual(i,1);$('manualRows').append(row);});renderTotals();if(!quiet){Sound.fanfare();celebrate();}}
 function addChain(label,word,img){const el=document.createElement('div');el.className='chain-item';const who=document.createElement('div');who.className='chain-who';who.textContent=label;el.append(who);if(img){const image=document.createElement('img');image.className='chain-img';image.src=img;image.alt=label;el.append(image);}else{const t=document.createElement('div');t.className='chain-word';t.textContent='「'+word+'」';el.append(t);}$('chain').append(el);}
 function changeManual(i,d){if(screen!=='result'||!game||game.committed)return;game.manual[i]=Math.min(99,Math.max(0,game.manual[i]+d));$('manual'+i).textContent=game.manual[i];renderTotals();checkpoint();}
 function renderTotals(){const {auto}=scoreRound(game),totals=game.names.map((_,i)=>game.totals[i]+auto[i]+game.manual[i]),sorted=totals.map((value,i)=>({value,i})).sort((a,b)=>b.value-a.value);$('totalRows').replaceChildren();sorted.forEach((p,idx)=>{const rank=1+sorted.filter(q=>q.value>p.value).length;const row=document.createElement('div');row.className='row';row.innerHTML='<span class="rank"><span class="rank-badge">'+rank+'</span><span class="row-name">'+escapeHtml(game.names[p.i])+'</span></span><span class="pt">'+p.value+'</span>';$('totalRows').append(row);});}
-function nextRound(){if(screen!=='result'||!game||game.committed||modalResolve||!permitted())return;const {auto}=scoreRound(game);game.totals=game.totals.map((v,i)=>v+auto[i]+game.manual[i]);game.committed=true;game.round++;backStack=[];setupNames=game.names.slice();renderPlayers();show('setup');}
+function nextRound(){if(screen!=='result'||!game||game.committed||modalResolve||!permitted())return;const {auto,pending}=scoreRound(game);if(pending){message('正解／不正解が未選択の答えがあります。');document.querySelector('.answer-judgment:has(button[aria-pressed="false"]):not(:has(button[aria-pressed="true"]))')?.scrollIntoView({block:'center'});return;}game.totals=game.totals.map((v,i)=>v+auto[i]+game.manual[i]);game.committed=true;game.round++;backStack=[];setupNames=game.names.slice();renderPlayers();show('setup');}
 function wipeRoundViews(){renderDrawing(ctx,[]);$('guessImg').removeAttribute('src');$('wordInput').value='';$('customTopic').value='';for(const id of ['topicText','refText','resultTopic','chain','autoRows','manualRows','totalRows'])$(id).replaceChildren();}
 function sessionStorageRemove(){try{sessionStorage.removeItem(SESSION_KEY);}catch{}$('resumeBtn').hidden=true;}
 async function resetAll(){if(modalResolve||!permitted())return;const ok=await openDialog('ゲームを終了しますか？','このゲームの絵・答え・スコアを削除します。プレイヤー名と設定は端末に残ります。',[{label:'キャンセル',value:false},{label:'終了する',value:true,primary:true}]);if(!ok)return;stopTimer();game=null;pendingSession=null;backStack=[];draft=[];undoStack=[];redoStack=[];sessionStorageRemove();wipeRoundViews();show('title');}
@@ -1442,5 +1479,8 @@ html,body,.app{background:var(--bg)!important;color:var(--text)}.topbar{backgrou
 
 #dialogBody{color:#526b6c}.sheet{background:#f7f3e5;color:#2e4d58}.drawing-popover .text-button{color:#4f6c6b}
 </style>
-</body>
+<style>.dock-undo{font-size:26px;width:44px;min-width:44px}.drawing-dock{gap:6px}.drawing-dock>.btn{padding:0 8px;font-size:14px}.answer-judgment{margin-top:16px;padding-top:12px;border-top:1px solid #9bad95}.answer-judgment p{font-size:14px;color:#294e62;margin:0 0 8px}.answer-judgment small{color:#526b6c;display:block}.judgment-buttons{display:flex;gap:8px;margin-top:10px}.judgment-buttons button{flex:1}.judgment-buttons button[aria-pressed="true"]{background:#2c5f75;color:#fff8df;border-color:#183e4e}</style><style id="touch-input-readability">
+@media (any-pointer:coarse){input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)}input::placeholder,textarea::placeholder{opacity:1}}
+</style><style id="readability-corrections">:root{--muted:#4e6258;--green:#326147}.title-foot,.privacy-note,.tagline{color:#4e6258}.edition{color:#775928}.tool.on{color:#173f50;background:#cbded5;border-color:#436f67}.chip.on{color:#254a35}.badge{color:#294f3a}.answer-judgment small{color:#405b56}</style><script>TableSound.install(Sound,()=>Sound.enabled,{"tap": "tap", "submit": "paper", "tick": "tick", "timeup": "timeup", "fanfare": "success"});
+</script><style>.tool-group .tool.on{color:#173f50;background:#cbded5}</style><style>.chain-arrow{color:#765621}</style></body>
 </html>
