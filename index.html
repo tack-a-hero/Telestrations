@@ -669,10 +669,10 @@ body{align-items:stretch;}
         <canvas id="drawCanvas" aria-label="お絵かき用キャンバス。指、ペン、マウスで描けます。" role="img"></canvas>
       </div>
       <div class="drawing-dock">
-        <button class="tool dock-undo" id="undoBtn" onclick="undoStroke()" aria-label="一手戻す" title="一手戻す" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 9l5 5M3 9h10a7 7 0 0 1 0 14"/></svg></button>
+        <button class="tool dock-undo" id="undoBtn" onclick="undoStroke()" aria-label="一手戻す" title="一手戻す" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m8 4-5 5 5 5M3 9h10a7 7 0 0 1 0 14"/></svg></button>
         <button class="tool dock-undo" id="redoBtn" onclick="redoStroke()" aria-label="やり直す" title="やり直す" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 5 5-5 5M21 9H11a7 7 0 0 0 0 14"/></svg></button>
-        <details id="drawingSettings">
-          <summary aria-label="ペンの太さ・消しゴムの設定">ペン設定</summary>
+        <div class="drawing-mode-pair"><button type="button" class="tool" id="penModeBtn" aria-pressed="true" onclick="finishStroke();eraser=false;updateTools();checkpoint()" aria-label="ペン" title="ペン"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 5 5M4 16 16 4a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="tool" id="eraserBtn" onclick="toggleEraser()" aria-label="消しゴム" title="消しゴム" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 14 9-9a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-8 8H8l-4-4a1.4 1.4 0 0 1 0-2ZM9 9l8 8M11 20h10"/></svg></button></div><details id="drawingSettings">
+          <summary aria-label="ペンの太さを設定" title="ペンの太さ"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 3v6M16 9v6M10 15v6"/></svg></summary>
           <div class="drawing-popover">
             <div id="palette" hidden></div>
             <div class="tools">
@@ -681,7 +681,7 @@ body{align-items:stretch;}
                 <button class="tool on" data-size="8" onclick="setSize(this)">中</button>
                 <button class="tool" data-size="18" onclick="setSize(this)">太</button>
               </div>
-              <button class="tool" id="eraserBtn" onclick="toggleEraser()" aria-label="消しゴム" title="消しゴム" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 13 5a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-8 8H8l-4-4a1.4 1.4 0 0 1 0-2ZM9 9l8 8M11 20h10"/></svg></button>
+              
               <button class="tool" onclick="clearCanvas(true)" aria-label="全消し" title="全消し" data-drawing-icon><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button>
             </div>
             <button class="text-button" onclick="closeDrawingSettings()">設定を閉じる</button>
@@ -1386,7 +1386,7 @@ function show(target,restore=false){closeDrawingSettings();lockNavigation();stop
   if(target==='setup')updateRotationInfo();
   if(target==='pass'){const p=game.order[game.turn%game.names.length];$('passName').textContent=game.names[p];mountRelayRoster(p);$('passPortrait').innerHTML=GameArt.person(p);$('notebookPage').textContent='PAGE '+String(game.turn+1).padStart(2,'0')+' / '+(game.names.length+game.names.length%2);$('passWhat').textContent=nextScreen()==='word'?'絵を見て答える番です':'絵を描く番です';$('passReady').onclick=()=>navTo(nextScreen());}
   if(target==='topic'){$('topicText').textContent=game.topic;$('topicBadge').textContent=LABELS[game.diff];$('topicBadge').className='badge badge-'+game.diff;}
-  if(isTurn()){const mode=target,p=game.order[game.turn%game.names.length];$(mode+'Who').innerHTML='<span class="edition-identity">'+GameArt.person(p)+'<span>'+escapeHtml(game.names[p])+' さんの番</span></span>';$(mode+'Step').textContent=(game.turn+1)+' / '+(game.names.length+game.names.length%2)+(game.turn===game.names.length?'（締め）':'');if(mode==='draw'){$('refLabel').textContent=game.turn?'前の人の答え':'お題';$('refText').textContent=game.turn?game.entries.at(-1).word:game.topic;if(!restore)sizeNewDrawing();redraw();fitCanvas();}else{$('guessImg').src=picture(game.entries.at(-1).strokes,game.entries.at(-1).canvasSize);$('wordInput').value=wordValue;}$('wordInput').blur();startTimer(restore);}
+  if(isTurn()){const mode=target,p=game.order[game.turn%game.names.length];$(mode+'Who').innerHTML='<span class="edition-identity">'+GameArt.person(p)+'<span class="turn-name">'+escapeHtml(game.names[p])+' さんの番</span></span>';$(mode+'Step').textContent=(game.turn+1)+' / '+(game.names.length+game.names.length%2)+(game.turn===game.names.length?'（締め）':'');if(mode==='draw'){$('refLabel').textContent=game.turn?'前の人の答え':'お題';$('refText').textContent=game.turn?game.entries.at(-1).word:game.topic;if(!restore)sizeNewDrawing();redraw();fitCanvas();}else{$('guessImg').src=picture(game.entries.at(-1).strokes,game.entries.at(-1).canvasSize);$('wordInput').value=wordValue;}$('wordInput').blur();startTimer(restore);}
   if(target==='result')renderResult();
   const route=$('notebookRoute');route.hidden=!game||['title','setup','result'].includes(target);if(!route.hidden){const total=game.names.length+game.names.length%2;route.style.setProperty('--seats',total);route.innerHTML=Array.from({length:total},(_,i)=>{const p=game.order[i%game.names.length];return '<div class="notebook-stop '+(i<game.turn?'done':i===game.turn?'current':'')+'" title="'+escapeHtml(game.names[p])+'：'+(i%2?'答える':'描く')+'">'+GameArt.person(p)+'<span class="route-num">'+(i+1)+' '+(i%2?'答':'絵')+'</span></div>'}).join('');}
   $(target+'Screen').scrollTop=0;window.scrollTo(0,0);checkpoint();
@@ -1440,7 +1440,7 @@ canvas.addEventListener('pointerdown',e=>{if(screen!=='draw'||modalResolve||poin
 canvas.addEventListener('pointermove',e=>{if(e.pointerId!==pointerId||!activeStroke)return;e.preventDefault();let pts=e.getCoalescedEvents?.()||[];if(!pts.length)pts=[e];for(const p of pts){const xy=pos(p),last=activeStroke.points.at(-1);if(Math.hypot(xy[0]-last[0],xy[1]-last[1])>.6&&activeStroke.points.length<5000)activeStroke.points.push(xy);}redraw();});
 canvas.addEventListener('pointerup',e=>{if(e.pointerId!==pointerId)return;if(activeStroke&&activeStroke.points.length<5000)activeStroke.points.push(pos(e));finishStroke();});
 for(const ev of ['pointercancel','lostpointercapture'])canvas.addEventListener(ev,e=>{if(e.pointerId===pointerId)finishStroke();});
-function updateTools(){$('undoBtn').disabled=!undoStack.length;$('redoBtn').disabled=!redoStack.length;$('eraserBtn').classList.toggle('on',eraser);$('eraserBtn').setAttribute('aria-pressed',String(eraser));document.querySelectorAll('[data-size]').forEach(b=>{const yes=Number(b.dataset.size)===penSize;b.classList.toggle('on',yes);b.setAttribute('aria-pressed',String(yes));});[...$('palette').children].forEach((b,i)=>{const on=ink===INKS[i]&&!eraser;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+function updateTools(){$('undoBtn').disabled=!undoStack.length;$('redoBtn').disabled=!redoStack.length;$('eraserBtn').classList.toggle('on',eraser);$('eraserBtn').setAttribute('aria-pressed',String(eraser));$('penModeBtn').setAttribute('aria-pressed',String(!eraser));document.querySelectorAll('[data-size]').forEach(b=>{const yes=Number(b.dataset.size)===penSize;b.classList.toggle('on',yes);b.setAttribute('aria-pressed',String(yes));});[...$('palette').children].forEach((b,i)=>{const on=ink===INKS[i]&&!eraser;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
 function undoStroke(){if(!undoStack.length||activeStroke||screen!=='draw')return;redoStack.push(draft.slice());draft=undoStack.pop();redraw();checkpoint();}
 function redoStroke(){if(!redoStack.length||activeStroke||screen!=='draw')return;undoStack.push(draft.slice());draft=redoStack.pop();redraw();checkpoint();}
 function setSize(b){finishStroke();penSize=Number(b.dataset.size);updateTools();}
@@ -1721,5 +1721,33 @@ html body .session-seat-copy b,html body .session-seat-copy small{border:0!impor
  const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(sync)}};
  addEventListener('resize',schedule);addEventListener('pageshow',schedule);visualViewport?.addEventListener('resize',schedule);visualViewport?.addEventListener('scroll',schedule);sync();
 })();
-</script><style id="portrait-radius-v18">html body .art-person,html body .portrait-choice,html body .session-face,html body .session-face img,html body .lobby-icon,html body img.player-icon{border-radius:6px!important}html body .portrait-choice,html body .session-face{overflow:hidden!important}</style></body>
+</script><style id="portrait-radius-v18">html body .art-person,html body .portrait-choice,html body .session-face,html body .session-face img,html body .lobby-icon,html body img.player-icon{border-radius:6px!important}html body .portrait-choice,html body .session-face{overflow:hidden!important}</style><style id="tabletop-ux-v20">@layer drawingStates{
+ html body :is(#bPen,#bErase,#bUndo,#bRedo,#bClear,#penModeBtn,#eraserBtn,#undoBtn,#redoBtn,#er,#undo,#redo,#clr,#clearBtn){display:inline-flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;border:1px solid #a8b4bf!important;border-radius:6px!important;background:#fffcf1!important;background-image:none!important;color:#24466f!important;box-shadow:none!important}
+ html body :is(#bPen,#bErase,#bUndo,#bRedo,#bClear,#penModeBtn,#eraserBtn,#undoBtn,#redoBtn,#er,#undo,#redo,#clr,#clearBtn) svg{display:block!important;width:22px!important;height:22px!important;flex:none!important}
+ html body :is(#bErase,#eraserBtn,#er)[aria-pressed=true]{background:#f0c76d!important;background-image:none!important;color:#302714!important;border-color:#f0c76d!important;box-shadow:inset 0 0 0 2px #302714!important;opacity:1!important}
+ html body :is(#bPen,#penModeBtn)[aria-pressed=true]{background:#244f8f!important;background-image:none!important;color:#fff!important;border-color:#244f8f!important;box-shadow:none!important;opacity:1!important}
+ html body :is(#bErase,#eraserBtn,#er,#bPen,#penModeBtn)[aria-pressed=false]{background:#fffcf1!important;background-image:none!important;color:#24466f!important;border-color:#a8b4bf!important;box-shadow:none!important;opacity:1!important}
+ html body :is(#bErase,#eraserBtn,#er,#bPen,#penModeBtn){min-width:44px!important;min-height:44px!important;touch-action:manipulation!important;transition:background-color 150ms,color 150ms!important}
+ html body .turn-name{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:center!important;line-height:1.5!important}
+}
+
+@layer turnHeading{
+ html body :is(#drawScreen,#wordScreen)>.meta-row{display:grid!important;grid-template-columns:1fr!important;gap:2px!important;align-items:center!important;width:100%!important;box-sizing:border-box!important;padding:0 8px!important;margin:0!important}
+ html body :is(#drawWho,#wordWho){display:block!important;grid-row:1!important;width:100%!important;min-width:0!important}
+ html body :is(#drawWho,#wordWho) .edition-identity{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;align-items:center!important;gap:8px!important;width:100%!important;box-sizing:border-box!important;padding:0!important;margin:0!important;border:0!important}
+ html body :is(#drawWho,#wordWho) .art-person{grid-column:1;justify-self:start}
+ html body :is(#drawWho,#wordWho) .turn-name{grid-column:2;justify-self:stretch}
+ html body :is(#drawStep,#wordStep){grid-row:2!important;text-align:center!important;justify-self:center!important;font-size:11px!important}
+ html body .drawing-dock{display:grid!important;grid-template-columns:44px 44px 44px 44px minmax(44px,1fr)!important;grid-template-rows:auto auto!important;gap:4px!important;align-items:center!important}
+ html body .drawing-dock #undoBtn{grid-column:3!important;grid-row:1!important}
+ html body .drawing-dock #redoBtn{grid-column:4!important;grid-row:1!important}
+ html body .drawing-mode-pair{grid-column:1/3;grid-row:1;display:flex;justify-content:flex-start;gap:4px}
+ html body .drawing-mode-pair button{width:44px!important;padding:4px!important;font-size:12px!important}
+ html body .drawing-dock #drawingSettings{grid-column:5!important;grid-row:1!important;min-width:0!important;justify-self:start!important}
+ html body .drawing-dock #drawingSettings summary{display:flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:none!important;background-image:none!important;color:#24466f!important;list-style:none!important}
+ html body .drawing-dock #drawingSettings summary::before,html body .drawing-dock #drawingSettings summary::after,html body .drawing-dock #drawingSettings summary::-webkit-details-marker{display:none!important;content:none!important}
+ html body .drawing-dock #drawingSettings summary svg{width:22px!important;height:22px!important;display:block!important}
+ html body .drawing-dock>button[onclick="submitDraw()"]{grid-column:1/-1!important;grid-row:2!important;width:100%!important}
+}
+</style></body>
 </html>
