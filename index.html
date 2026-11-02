@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head><meta name="app-release" content="screen-repair-20261029-v10"><script>function mountRelayRoster(p){const h=document.getElementById('relayRoster');if(h)h.remove();[...$('passScreen').children].forEach(e=>e.classList.remove('v5-hidden-handoff'));}
+<head><style id="refinement-v21">@layer approvalV21,squareNotebookV21,passV21;@layer squareNotebookV21{
+ html body:has(#drawScreen.active) #notebookRoute{display:none!important}
+ html body:has(#drawScreen.active) .app{padding:0!important}
+ html body #drawScreen #drawStep{display:none!important}
+ html body #drawScreen>.ref{margin:4px!important;padding:6px 8px!important;min-height:36px!important}
+ html body #drawScreen>.progress{margin:0!important;height:3px!important}
+ html body #drawScreen{padding-left:4px!important;padding-right:4px!important;box-sizing:border-box!important}
+ html body #drawingStage{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;min-height:0!important}
+ html body #drawingStage #drawCanvas{max-width:100%!important;max-height:100%!important}
+ html body #drawingSettings summary{color:#244f8f!important}
+ html body #drawingSettings[open] summary{color:#fff!important;background:#244f8f!important;border:0!important;border-radius:6px!important}
+ html body #drawingSettings .tool-group .tool.on{background:#244f8f!important;color:#fff!important;border-color:#244f8f!important;box-shadow:none!important}
+ html body #drawingSettings .tool-group .tool:not(.on){background:#fffcf1!important;color:#24466f!important}
+}</style><meta name="app-release" content="screen-repair-20261029-v10"><script>function mountRelayRoster(p){const h=document.getElementById('relayRoster');if(h)h.remove();[...$('passScreen').children].forEach(e=>e.classList.remove('v5-hidden-handoff'));}
 </script><script>window.SessionUI=(()=>{
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const icon=p=>p.icon||(window.GameArt?GameArt.person(p.seat??p.id):'');
@@ -1450,9 +1463,9 @@ function validCanvasSize(size){return size===undefined||(Array.isArray(size)&&si
 function closeDrawingSettings(){const el=$('drawingSettings');if(el)el.open=false;}
 function sizeNewDrawing(){
   const stage=$('drawingStage');
-  const w=Math.max(100,stage.clientWidth),h=Math.max(100,stage.clientHeight);
-  const scale=Math.min(2,1200/Math.max(w,h));
-  canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
+  const side=Math.max(100,Math.min(stage.clientWidth,stage.clientHeight));
+  const scale=Math.min(2,1200/side);
+  canvas.width=canvas.height=Math.round(side*scale);
 }
 function fitCanvas(){
   if(screen!=='draw')return;
@@ -1724,7 +1737,7 @@ html body .session-seat-copy b,html body .session-seat-copy small{border:0!impor
 </script><style id="portrait-radius-v18">html body .art-person,html body .portrait-choice,html body .session-face,html body .session-face img,html body .lobby-icon,html body img.player-icon{border-radius:6px!important}html body .portrait-choice,html body .session-face{overflow:hidden!important}</style><style id="tabletop-ux-v20">@layer drawingStates{
  html body :is(#bPen,#bErase,#bUndo,#bRedo,#bClear,#penModeBtn,#eraserBtn,#undoBtn,#redoBtn,#er,#undo,#redo,#clr,#clearBtn){display:inline-flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;border:1px solid #a8b4bf!important;border-radius:6px!important;background:#fffcf1!important;background-image:none!important;color:#24466f!important;box-shadow:none!important}
  html body :is(#bPen,#bErase,#bUndo,#bRedo,#bClear,#penModeBtn,#eraserBtn,#undoBtn,#redoBtn,#er,#undo,#redo,#clr,#clearBtn) svg{display:block!important;width:22px!important;height:22px!important;flex:none!important}
- html body :is(#bErase,#eraserBtn,#er)[aria-pressed=true]{background:#f0c76d!important;background-image:none!important;color:#302714!important;border-color:#f0c76d!important;box-shadow:inset 0 0 0 2px #302714!important;opacity:1!important}
+ html body :is(#bErase,#eraserBtn,#er)[aria-pressed=true]{background:#244f8f!important;background-image:none!important;color:#fff!important;border-color:#244f8f!important;box-shadow:none!important;opacity:1!important}
  html body :is(#bPen,#penModeBtn)[aria-pressed=true]{background:#244f8f!important;background-image:none!important;color:#fff!important;border-color:#244f8f!important;box-shadow:none!important;opacity:1!important}
  html body :is(#bErase,#eraserBtn,#er,#bPen,#penModeBtn)[aria-pressed=false]{background:#fffcf1!important;background-image:none!important;color:#24466f!important;border-color:#a8b4bf!important;box-shadow:none!important;opacity:1!important}
  html body :is(#bErase,#eraserBtn,#er,#bPen,#penModeBtn){min-width:44px!important;min-height:44px!important;touch-action:manipulation!important;transition:background-color 150ms,color 150ms!important}
